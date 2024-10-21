@@ -1,0 +1,27 @@
+<h1>Receiving messages in Java</h1>
+
+<p>
+Here we demonstrate how to receive messages and print them to the screen. As in the previous example, we will show how to do this both with and without the wrapper classes. </p>
+
+<h2>Using the wrapper</h2>
+
+<p> <a href="src/examples/CanDump.java">Source code</a></p>
+<p>We start by creating a <code>Handle</code> object and opening the channel as in the previous example. We then call the <code>dumpMessageLoop</code> method, which is where the interesting parts happen.</p>
+
+<p>In <code>dumpMessageLoop</code>, we have a <code>while</code> loop which repeats until an error occurs, or the program is terminated. Inside this, we have another <code>while</code> statement that uses the <code>hasMessage</code> method in its condition. This method wraps the <code>canReadSync</code> method. It returns true if there is a message on the channel or if one is received within 100 ms. It is also possible to set a specific timeout by passing it as a parameter to this method. Inside the inner loop, we receive a <code>Message</code> object using <code>readMessage</code>, which is then passed on to <code>dumpMessage</code>, where the message is printed.</p> 
+
+<h2>Not using the wrapper</h2>
+<p> <a href="src/examples_no_obj/CanDump.java">Source code</a></p>
+<p>Like in the example with the wrapper, the most interesting thing happens in the <code>dumpMessageLoop</code> method.</p>
+
+<p>Here we want to call the <code>canReadWait</code> method. Like most other Canlib methods, they return a status code which indicates whether or not the call was successful or if something went wrong. They also take pointers as parameters, and this is where they put their output (in this case, the message). Java does not have pointers and primitive datatypes are passed by value, so JNA has introduced objects which simulate them. In this example, we use objects of the classes <code>IntByReference</code> and <code>LongByReference</code>. These are passed to the Canlib methods, and we can then use the <code>getValue</code> method to read the "pointee". </p>
+
+<p>To read messages, we first call <code>canReadWait</code>. If there is a message on the channel or if one is received within the timeout period (which is 100 ms in this case), it will write the message to the output parameters and return <code>canOK</code>. </p>
+
+
+<h2>Exercises</h2>
+<ul>
+<li>Start this program, then run the Hello World program from the previous example. Make sure to modify one of the programs so they use different channels which are connected to eachother.</li>
+<li>Send an error message to your program using the<code> canMSG_ERROR_FRAME</code> flag.</li>
+<li>The <code>canReadSync</code> method waits until there is a message on the channel, but doesn't read the message. The <code>canRead</code> method reads messages, but returns <code>canERR_NOMSG</code> immediately if there is no message on the channel. Rewrite the program to use these methods instead of <code>canReadWait</code>.</li>
+</ul>

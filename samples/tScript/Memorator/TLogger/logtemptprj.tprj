@@ -1,0 +1,11 @@
+[Project]
+Version=1
+Comment=Uncommented
+Sourcefile=logtemp.t
+Databasefiles=
+Slot=0
+NumEnvvar=0
+[Compiler]
+Verbose=0
+Encrypt=0
+Includesource=0

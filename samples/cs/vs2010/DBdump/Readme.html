@@ -1,0 +1,102 @@
+<h1>
+An advanced database application
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This application shows most of the database related functions in Kvadblib, including the ones for creating and modifying databases. If you are unsure of how databases work, it is recommended that you take a look at <a herf="../../../../Getting started/CSharp/VS2010/6_DBApp">part 6</a> in the tutorial before proceeding. </p>
+
+<h2>Preliminaries</h2>
+<p>
+In order to build this program, you will need to have kvadblib.dll in your path or have canlib SDK installed. 
+</p>
+
+<h2>Usage</h2>
+<p>This is a terminal program. The actions performed are determined by the command line arguments. The flags in the parameters determine an action which takes a previous parameter as argument. For example, the command <code>DBDump test.dbc -f speed -m -v</code> will print the information about the <code>speed</code> message in the database stored in <code>test.dbc</code>. When the program reads the '-f' flag, it creates a database handle to the database in the file supplied in the previous parameter (text.dbc). The next flag is '-m', which takes the previous parameter (speed) and looks for a message with that name with the stored database handle. The '-v' flag outputs all information about the previous item using one of the dumping methods.</p>
+
+<h2>File operations</h2>
+
+<h3>Read file (-f)</h3>
+<p>Takes the previous parameter and calls <code>ReadFile</code> with it. Stores the resulting handle. </p>
+<p>Example: <code>DBDump db.dbc -f</code> (loads the database in db.dbc but doesn't do anything with it).</p>
+
+<h3>Write file (-w)</h3>
+<p>Takes the stored database handle and writes that database to a file whose name is supplied using the previous argument. Uses the <code>WriteFile</code> method. </p> 
+<p>Example: <code>DBDump db.dbc -f copy.dbc -w</code> (writes the contents of db.dbc to copy.dbc).</p>
+
+<h3>Create database (-c)</h3>
+<p>Creates a new database file and adds some data to it, then stores the database handle. Uses the <code>Create</code> method to create a new database. This method takes an third argument (apart from the database handle which will point to the new database and the file name) which is a the file whose contents we wish to copy into the new file. This filename is empty in this case, since we want a completely empty database. We then create a few nodes, messages and signals in the <code>createDatabase</code> method. </p> 
+<p>Example: <code>DBDump newDB -c newDB.dbc -w</code> (will create a new database and store it to a file)</p>
+
+
+<h2>Locating database items</h2>
+<p>These functions all take a previously stored handle of some sort and use it to find some other item and store the handle to that item.</p>
+
+<h3>Get message by name (-m)</h3>
+<p>Takes the stored database handle, uses <code>GetMsgByName</code> and stores the resulting message handle.</p>
+<p>Example: <code>DBDump myDB.dbc -f  Sensor1 -m</code> (Fetches the message with the name Sensor1 from the myDB.dbc file)</p>
+
+<h3>Get message by id (-i)</h3>
+<p>Same as above but looks for the message with the matching identifier instead, with <code>GetMsgById</code>
+
+<h3>Get Signal (-s)</h3>
+<p>Uses the stored message handle to call <code>GetSignalByName</code> and gets the signal matching the supplied name.</p>
+<p>Example: <code>DBDump myDB.dbc -f  Sensor1 -m Speed -s</code> (Gets a handle the signal named speed from the Sensor1 message in the myDB.dbc file)</p>
+
+<h3>Get node (-n or -N)</h3>
+<p>Takes the stored database handle and searches for a node with the supplied name, using the <code>GetNodeByName</code> method.</p>
+<p>Example: <code>DBDump myDB.dbc -f Node1 -n</code></p>
+
+<h3>Get attribute (-a)</h3>
+<p>Returns the value of the supplied attribute on the stored node handle. Uses <code>GetNodeAttributeIntByName.</code></p>
+<p>Example: <code>DBDump myDB.dbc -f Node1 -n value -a</code></p>
+
+
+<h2>Generating message data</h2>
+<p>The folowing two functions generate data and store it in the <code>data</code> array. This stored array can then be used in other functions. They do not use any of the handles.</p>
+
+<h3>Zeroes (-z)</h3>
+<p>This will set all the bytes in the <code>data</code> array to 0.</p>
+
+<h3>Hex data (-h)</h3>
+<p>Generates a data array from an argument in hexadecimal form. </p>
+<p>Example: <code>DBDump FF00CF1A -h</code> (creates a data array with the first four bytes set, equivalent to {255, 0, 207, 26})</p>
+
+<h2>Reading and writing signal values</h2>
+<p>These functions read values from and write values to the stored data array.</p>
+
+<h3>Fetch physical value (-P)</h3>
+<p>Uses <code>GetSignalValueFloat</code> with the stored message data array as parameter. This results in the physical value of the array (of type <code>double</code>) which is printed to screen.</p>
+<p>Example: Let's say the Speed signal in Sensor1 has the start bit 0, the length 8, offset 0 and scaling factor 0.5. The command <code>DBDump myDB.dbc -f Sensor1 -m Speed -s -h14 -P</code> will print 10.0.</p>
+
+<h3>Fetch raw value (-R)</h3>
+<p>Uses <code>GetSignalValueInteger</code> with the stored data array and gets the raw data value. Essentially this is the value created by the bits in the message that make up the signal's value. </code>
+<p>Example: <code>DBDump myDB.dbc -f Sensor1 -m Speed -s 08 -h -R </code> (Will print 8)</p>
+
+
+<h3>Store physical value (-p)</h3>
+<p>Takes a <code>double</code> as a parameter and uses <code>StoreSignalValuePhys</code> to store it into the message data array. </p>
+<p>Example: <code>DBDump myDB.dbc -f Sensor1 -m Speed -s 12.5 -p </code> (Will result in the first byte of the data having the value 25)</p>
+
+<h3>Store raw value (-r)</h3>
+<p>Takes an <code>int</code> and stores it into the data array using <code>StoreSignalRaw</code>.
+<p>Example: <code>DBDump myDB.dbc -f Sensor1 -m Speed -s 25 -p </code> (Same result as the above example)</p>
+
+<h2>Deleting database items (-d)</h2>
+<p>Using the -d flag will remove the last selected database items from the database. It uses <code>DeleteMsg</code>, <code>DeleteSignal</code>, <code>DeleteNode</code> or <code>RemoveReceiveNodeFromSignal</code> depending on the item.
+<p>Example: <code>DBDump newDB -c msg0 -m -d newDB.dbc -w</code> (Creates a new database, deletes the first message and stores the result in a file)</p>
+
+<h2>Viewing data (-v)</h2>
+<p>Prints information about the last selected database or the stored data array. If the -v flag is the first argument, the program will print any action it performs.</p>
+
+<h2>Examples</h2>
+<ul>
+<li>
+<code>DBDump j1939.dbc -f A1 -m EngBlowerBypassValvePos -s 44 -p EngGasSupplyPress -s 1200 -p -v</code> <br />
+<p>This will read the database in the file j1939, fetch the message A1 and create a message data array where ENgBlowerByPassValvePos is set to 44% and EngGasSupplyPress is set to 1200 kPa.</p>
+</li>
+<li>
+<code>DBDump j1939.dbc -f A1 -m 6e6009 -h EngBlowerBypassValvePos -s -P EngGasSupplyPress -s  -P</code>
+<p>This will return the physical values for EngBlowerBypassValvePos and EngGasSupplyPress stored in the message 6e6009, which are 44 and 1200. 
+</li>
+</ul>

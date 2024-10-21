@@ -1,0 +1,51 @@
+<h1>File I/O in t</h1>
+
+<a href=".">Source code</a>
+
+<p>This program demonstrates how to read and write files using the t language.</p>
+
+<h2>Preliminaries</h2>
+<p>To use CanLib you need to add <code>Kvaser.CanLib.dll</code> as a reference to the project. You need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.CanLib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.CanLib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Usage</h2>
+<p>The program can be run through Visual Studio or by running the .exe file. The compiled t program as well as a sample input file is available in bin/Debug.</p>
+
+<p>The program assumes that the device is located on channel 0 and loads the program into slot 0. The program will take the device's first channel on bus with a bitrate of 1 Mb/s. </p>
+
+<p>The program will upload a file with messages to the device. The t program will then read these messages and send them. Any incoming messages to the device will be written to an array as well as printed. This array will be written to a file when the t program stops, and this file is downloaded and printed.</p>
+
+<h2>The C# program</h2>
+<p>The C# program is fairly straight forward and most of the methods used have been seen in the previous examples. The new calls are <code>kvFileDelete</code>, <code>kvFileCopyToDevice</code> and <code>kvFileCopyFromDevice</code>, which deletes, uploads and downloads files from/to the device, respectively.</p>
+
+<h2>The t program</h2>
+
+<h3>Variables</h3>
+<p>In this program, we have declared variables for the channel and bitrate used for communication, as well as the names of the input and output files. These may be changed to suit your needs, but remember that you will need to change the corresponding variables in the C# program if you do. We also have a couple of variables for keeping track of array sizes.</p>
+
+<p>Since t does not allow multi-dimensional arrays, we use a <code>struct</code> with an array as its member and make an array of those. This particular array holds all the text we want to write to the output file, line by line. There is also a variable which keeps track of this array to avoid overflow.</p>
+
+<h3>Starting the program and reading messages</h3>
+<p>Like in the previous example, we set the channel's parameters and go on bus. We then call <code>read_messages</code> to output any stored messages.</p>
+
+<p>In <code>read_messages</code>, we read all the stored messages and write them to the channel. To do this, we first get a <code>FileHandle</code> to the file using <code>fileOpen</code>. In the call to <code>fileOpen</code>, we use the <code>OPEN_READ</code> flag, which means that we only want read access to the file. If the call s successful, we use an array called <code>buf</code> to store the line we get from <code>fileGets</code>. This call will return the number of bytes in the line, or a negative number indicating an error. </p>
+
+<p>To read the messages, we iterate through it character by character. We first skip any characters that are not a blank space. This part before the first blank space is interpreted as the identifier. We then skip any blank spaces after the identifier until we reach the message. Using the <code>atoi</code> call, we store the first part of the message as the message's identifier. This call disregards any leading whitespace, then interprets as many characters as possible as a number. In our case that will be any characters of the string until it reaches a blank space.</p>
+
+<p>To read the message body, we iterate through the line two characters at a time. We first use <code>atoi</code> with an additional parameter of 16 to indicate that we want to look for numbers in hexadecimal. If no such number is found, it will return zero. If it returns zero and the characters we're looking at are not "00", we break the loop since this means that we have reached the end of the message. Otherwise, we increace the <code>dlc</code> field of the message with one and add the parsed byte to the array.</p>
+
+<p>The final thing we do is to look for the message flags. Here we just go through the line until we reach its end or a semicolon (indicating the end of the message) and add a flag if we find one.</p>
+
+<p>Once the message is parsed, we write it to the channel and read the next line.</p>
+
+<h3>Receiving messages</h3>
+<p>Once a message is received, we check if there is room for in the <code>out</code> array. If it is, we call <code>msg_to_str</code>, which writes the message to the array, and then print it.</p>
+
+<p>The <code>msg_to_str</code> is relatively easy to follow. If the message is an error frame, we disregard its content. If not, we create a string and store the message's identifier and each of its bytes in hexadecimal form using <code>sprintf</code>. We append the message's flags (x for extended identifier and r for remote message) as well as a semicolon and line break, then store the message in the array.</p>
+
+<h3>Stopping the program and writing the messages</h3>
+<p>When we stop the program, we call the <code>write_messages</code> method, which writes all the lines to the output file. This is done by getting a new <code>FileHandle</code>, and then using <code>FilePuts</code>to write each line. In this call to <code>fileOpen</code>, we don't supply any flag, which by default means that we get both reading and writing access. </p>

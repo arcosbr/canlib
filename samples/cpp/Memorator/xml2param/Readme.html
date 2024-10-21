@@ -1,0 +1,10 @@
+<h1>Converting XML to param.lif</h1>
+
+<a href="xml2param.cpp">Source code</a>
+
+<p>This sample shows how to convert an XML file to a param.lif file which can be uploaded to a Memorator device, or vice versa.</p>
+
+<h2>Usage</h2>
+<p> Run the program with <code>xml2param [-d] xmlfile paramfile [-inv]</code>.</p>
+
+<p> The <code>-d</code> flag will turn on debug output through a call to <code>kvaXmlDebugOutput</code>. If the <code>-inv</code> flag is used, the program will convert the XML file to a param.lif and write it to the specified output file using <code>kvaXMLToFile</code>. Otherwise, the program will convert a param.lif file to XML and write it using <code>kvaFileToXml</code>. </p>

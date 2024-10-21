@@ -1,0 +1,31 @@
+<h1>Automatic Responses</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This sample program shows how you can use object buffers to respond automatically to messages. It also shows how codes and masks work, as well as how to use asynchronous notifications to listen for messages. It is a Windows Forms application, and the interesting parts of code is in <code>AutoResponse.Designer.cs</code>. </p>
+
+<h2>Creating a buffer</h2>
+
+<p>Select a channel and click "Initialize" to initialize the library, open a handle and set the bitrate to 250kb/s. To go on bus, press "Bus on".</p>
+
+<p>Press "Create" to create an object buffer. This is done by calling <code>canObjBufAllocate</code> with the <code>canOBJBUF_TYPE_AUTO_RESPONSE</code> parameter. The call will return an object handle, which we use to refer to the buffer when we make calls to it. </p>
+
+<p>Enter a code and a mask to determine which incoming messages to respond to, then press "Set filter" to call the <code>canObjBufSetFilter</code> method, which sets the filter on the buffer. If the "Respond to RTR messages only" box is checked, the program will also call <code>canObjBufSetFlags</code>, which sets the flags for the incoming messages.</p>
+
+<p>To set the contents of the automatic response, fill in something in the identifier, dlc and data fields, then press "Update content". </p>
+
+<p>Press "Enable buffer" to start the automatic responses with the <code>canObjBufEnable</code> call. When a message matching the mask and code is received, the object will automatically respond to it. </p>
+
+<p>The object buffer can be disabled by pressing "Disable buffer". Doing so will not remove it completely, so pressing "Enable buffer" again will result in the same response to the same type of messages as before. Pressing "Remove" will delete the object buffer completely. </p>
+
+<h2>Understanding filters</h2>
+<p>When a message is received, the object buffer checks its identifier with the filter to check whether or not it should respond to it. This filter is made up of a mask and a code, both unsigned integers. If a bit in the mask is set to 1, then the bit in the same position in the mask must match that bit in the code. For example, having the mask 10101 (in binary, 21 in decimal) and the code 00000 will mean "the first, third and fifth least significant bits must be 0". Setting both the mask and the code to 1 will mean that the filter will accept any odd number. </p>
+
+<p>The same type of filters can be used in <code>canAccept</code> calls.</p>
+
+<h2>Using <code>canSetNotify</code></h2>
+<p>When we initialize the channel, we also call <code>canSetNotify</code> with the channel handle, the window's <code>Handle</code> pointer and the <code>canNOTIFY_RX</code> code. The <code>Handle</code> is a member of the <code>Control</code> class and points to the control's window handle. Whenever a specified event occurs on the channel (received messages in this case, since we used <code>canNOTIFY_RX</code>), the window's <code>WndProc</code> method will be called. </code>
+
+<p><code>WndProc</code> takes one parameter of the class <code>Message</code>. The <code>Message</code>s generated from <code>canSetNotify</code> have the type <code>WM__CANLIB</code>. The <code>HParam</code> of this message will be the channel handle and the <code>LParam</code> will contain the event type. Note that the CAN message is not part of the <code>Message</code> object. Since we are only listening for RX events, we know that there are incoming messages so we call <code>canRead</code> and send the results to <code>DisplayMessage</code>. </p>
+
+<p>For more information about using <code>canSetNotify</code>, see the section about Asynchronous Notifications in the Canlib help file. You can also look into the official documentation for <code>WndProc</code>.

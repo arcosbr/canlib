@@ -1,0 +1,20 @@
+<h1>
+Using environmental variables
+</h1>
+
+<p><a href="envvar.c">C program</a>, <a href="test1.t">t program</a></p>
+
+<h2>Environment variables explained</h2>
+<p>Environment variables are variables declared in the <code>envvar</code> block of a t program. They are visible globally in the program as well as to other programs running on the same device and to a computer which is connected to the device. </p>
+
+<h2>The t program</h2>
+<p>The program contains four environment variables: an integer called <code>evInt</code>, one called <code>evUpdateCount</code>, a char array and a checksum for that array. </p>
+
+<p>There are two <code>on envvar</code> hooks: one updates the counter variable every time <code>evInt</code> changes value. The other one recalculates the checksum of the char array. These hooks are run whenever the environmental variables are changed.</p>
+
+<h2>The C program</h2>
+<p>The C program opens a CAN channel and loads the script to the device. It then uses <code>canSetNotify</code> to receive notifications whenever an environmental variable is changed. For this purpose, we use an invisible window. It has a <code>WindowProc</code> method which prints the type of the received event. </p>
+
+<p>To use an environment variable, we use <code>kvScriptEnvvarOpen</code>, which gives a handle which is used when we want to access the variable. We open <code>evInt</code> and <code>evIntCounter</code> and get handles to them. We then enter a loop where we update <code>evInt</code> repeatedly and print the values of the variables. This is done with <code>kvScriptEnvvarGetData</code> and <code>kvScriptEnvvarSetData</code>.  </p>
+
+<p>We use the same methods to update <code>evBigOne</code> and note that its checksum matches the expected value. Once that is done, we close the handles to the environmental variables with <code>kvScriptEnvvarClose</code>, then stop and unload the script and close the channel.</p>

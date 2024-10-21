@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>_2_CanDump_T_net6</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Company>Kvaser AB</Company>
+    <Copyright>Copyright © Kvaser AB</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\2_CanDump.txe" Link="2_CanDump.txe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Kvaser.CanLib" Version="*" />
+  </ItemGroup>
+
+</Project>

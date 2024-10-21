@@ -1,0 +1,43 @@
+<h1>
+Part 6: Databases
+</h1>
+
+<a href=".">VS2010 project</a>
+
+<p>This section introduces CAN databases and shows how you can use them in your own applications. The sample program loads a database file and then interprets any incoming messages according to the specification in the database.</p>
+
+<h2>Step 0: Understanding CAN databases</h2>
+<p>A CAN database contains information about messages. Each message has (among other attributes) an identifier, a name and one or several signals. When a CAN message is received, we want to look up the message in the database that has the corresponding identifier. The signals' attributes contain information about how the CAN message data will be interpreted. These attributes include its name, start bit, length, offset, scaling factor, min/max values and its unit. The start bit and length determine which bits of the CAN message data that contain this signal's value. The offset and scaling factor determine how the value should be interpreted. </p>
+
+
+<p>For example, consider a message with the id 123, a DLC of 2 and the following signals:</p>
+
+<table>
+<tr><td>Name</td><td>Start bit</td><td>Length</td><td>Offset</td><td>Scaling factor</td><td>Min</td><td>Max</td><td>Unit</td><td>Comment</td></tr>
+<tr><td>"Temperature"</td><td>0</td><td>8</td><td>-50</td><td>0.5</td><td>-50</td><td>78</td><td>"C"</td><td>"Temperature as measured in degrees Celsius"</td></tr>
+<tr><td>"Pressure"</td><td>8</td><td>8</td><td>800</td><td>1</td><td>800</td><td>1055</td><td>"hPa"</td><td>"Air pressure"</td></tr>
+</table>
+
+<p>If we receive a message with id 123, DLC 2 and data {141, 211}, we can use our database to interpret this as the temperature being 20.5 C and the air pressure being 1022 hPa.</p>
+
+<p>To create or modify databases, you can use the Kvaser Database Editor, which can be found in the <a href="http://www.kvaser.com/downloads/">Downloads</a> section on our web page.</p>
+
+<h2>Step 1: Setup</h2>
+<p>To run this program, you need to add a reference to kvadblibCLSNET.dll in your project. You also need kvadlib.dll in your path. </p>
+<p>Much of the code in this sample is reused from <a href="../2_CanDump/Readme.html">Part 2</a>. Like in that example, we have a method which loops and receives messages, then sends the data to another method which prints them. </p>
+
+<h2>Step 2: Accessing the database</h2>
+<p>To access the database, we need to create a handle for it. We do this using the <code>Open</code> and <code>ReadFile</code> methods in Kvadblib. This handle is then used for retreiving information from the database.</p>
+
+<h2>Step 3: Reading messages</h2>
+<p>The <code>DumpMessageLoop</code> is the method that differs the most from Part 2. When we receive a message on the bus, we use our database handle to look for a message with the correct id and receive a <code>MessageHnd</code> using the <code>GetMsgById</code> method. If the message has an extended identifier, its most significant bit will be set to 1 in the database. To match the database message's identifier with the CAN message's identifier, we flip this bit if the flag is set. </p>
+
+<p>We read the message's name and print it, then go through the message's signals using <code>GetFirstSignal</code> and <code>GetNextSignal</code> to create <code>SignalHnd</code> objects. Just like the <code>Canlib</code> methods for reading messages of a channel, these methods return an error status if there is no signal, so we use a <code>while</code> loop like the one we use when reading the messages in the RX queue.  </p>
+
+<p>For each signal, we read its name and unit and use the <code>GetSignalValueFloat</code> method to convert the data from the message into a physical value.</p>
+
+<h2>Step 4: Running the program</h2>
+<p>By default, the program will use channel 0 for listening and the supplied <code>engine_example.dlc</code> file for looking up messages. If you want to use a different database file or channel, you can supply them as arguments in the command line. </p>
+
+<p>Run the program and send a message with an id that matches one of the messages in the database. The program will output the physical value of the signals in the message.</p>
+

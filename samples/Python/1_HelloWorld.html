@@ -1,0 +1,32 @@
+<h1>Part 1: Hello World!</h1>
+
+<a href="1_HelloWorld.py">Source code</a>
+
+<p>This first example demonstrates how to open a channel and send a message to it.</p>
+
+<h2>Step 1: Preliminaries</h2>
+<p>To run this program, you must have a recent version of Python 2.7 (that includes the package installer pip) installed on your computer. You also need to install the Python canlib module (e.g. using <code>pip install canlib-x.y.z.zip<code>. The Python canlib zip archive can be found in <code>Samples\Python</code> including a <a href="../../Python/README.html">README.html</a>.
+The program will try to open Canlib channel 0 and write a message to it, so make sure that the channel is available for opening and connected to something or change the channel number in the source code to something more suitable.</p>
+
+<h2>Step 2: Initializing Canlib and setting up a channel</h2>
+<p>Before making any calls to Canlib, we must initialize the library. With the wrapper, this is done by creating a <code>canlib</code> object. This will initiate the library as well as set up prototypes for the various Canlib functions. </p>
+
+<p>Next, we use the <code>openChannel</code> to return a <code>canChannel</code> object. The parameters we pass are the channel number (0) and the <code>canOPEN_ACCEPT_VIRTUAL</code> flag, which means that channel 0 can be on a virtual device.</p>
+
+<p>Once we have successfully opened a channel, we need to set its bitrate. We do this using the <code>setBusParams</code> method of the channel, which takes the desired bitrate (an enumerable) as parameters. The underlying method has more parameters, but they are set to 0 by default and not important in this example.</p>
+
+<p>Next, take the channel on bus using the <code>busOn</code> method. This needs to be done before we can send a message.</p>
+
+<h2>Step 3: Send a message</h2>
+<p>Now we declare the variables needed to send our message: an identifier, a data array which is the message body and the optional flags. The identifier is an integer of up to 11 bits (29 bits if we use the extended ID flag) and the data array can contain up to eight bytes. These fields are passed to the  <code>writeWait</code> method, along with a timeout value of 50 ms. This method will try to write the message to the channel and block until either the message is transmitted or the timeout value reached. In many cases, it is unneccesary to wait for the message to be transmitted (in which case we can just call <code>write</code>, without a timeout value), but in this case we want to close the bus after transmitting. Attempting to close a channel while a message is being transmitted might cause problems, which is why need to wait a bit.</p>
+
+<p>The underlying functions <code>canWait</code> and <code>canWriteWait</code> actually takes an additional parameter: the length of the array. In this case, the wrapper calculates it for us but it is good to know what the function looks like for situations where you can't use the wrapper. </p>
+
+<h2>Step 4: Go off bus and close the channel</h2>
+<p>Once we are done using the channel, we go off bus and close it using the <code>busOff</code> and <code>closeChannel</code> methods, respectively. </p>
+
+<h2>Exercises</h2>
+<ul>
+<li>Use some other program (such as Kvaser CanKing) to listen for messages on a channel connected to the one used in the program. Make sure to use the same bitrate.</li>
+<li>Change the message identifier to something large, like 10000. What happens on the receiving side? Then, change the <code>flags</code> parameter to <code>canlib.canMSG_EXT</code>. What happens now?</li>
+</ul>

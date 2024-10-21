@@ -1,0 +1,27 @@
+<h1>
+Part 2: Receiving messages
+</h1>
+
+<a href="2_CanDump.py">Source code</a>
+
+<p>
+In the previous part, we demonstrated how to construct a program which sends a message on a CAN channel. In this part, we will show how to read messages from a channel.
+</p>
+
+<h2>Step 1: Setup</h2>
+<p>Like in the previous example, we need to initialize the library, open a channel and go on bus. This is done in the exact same way as in the previous example.</p>
+
+<h2>Step 2: Waiting for messages</h2>
+<p>In the <code>dumpMessageLoop</code> method, we create a loop which runs as long as there are no errors in reading the messages. The way it works is that we first call <code>read</code> with a timeout value of 50 ms. This method will block for until either a message is received or until the timeout is reached. If the timeout is reached, it will throw a <code>canNoMsg</code> exception. Calling <code>read</code> without a timeout is equivalent to using a timeout of 0.</p>
+
+<p>If no exception is thrown, the <code>dumpMessage</code> method is called. Here, we first check if the message's error flag is set, in which case we print an error message. If not, we just print the message.</p>
+
+<h2>Step 3: Exiting the program</h2>
+<p>The last thing we do in the loop is to print any possible exceptions except for <code>canNoMsg</code> since this would imply that an error in reading the messages has occurred.</p>
+
+<p>When we're done reading messages, we go off bus and close the channel, as always. </p>
+
+<h2>Exercises</h2>
+<ul>
+<li>Use some other program (such as <code>HelloWorld.py</code> from the <a href="1_HelloWorld.html">Hello world example</a>) to send a message.
+</ul>

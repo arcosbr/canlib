@@ -1,0 +1,59 @@
+<h1>
+A Java wrapper for Canlib
+</h1>
+
+<p>This is an example of how Canlib can be used in Java applications. Here, we use JNA (Java Native Access) to access Canlib functionalities. We also provide two wrapper classes to make traditional Java-style programming easier. </p>
+
+<p>The wrapper is available as an <a href="CanlibWrapper">Eclipse project</a>.</p>
+
+<h2>Preliminaries</h2>
+<p>To use the classes, you need canlib32.dll in your path. You also need JNA, which can be found at the <a href="https://github.com/java-native-access/jna">JNA page</a> on Github. </p>
+
+<h2>Accessing Canlib</h2>
+<p>The <code>Canlib</code> class contains the interface for accessing canlib. To do this, we create an interface which contains declarations for all the Canlib components we want to use and declare an instance of it. This instance of the interface is then used to make Canlib calls. </p>
+
+<p>All method declarations and a class declaration (<code>canUserIoPortData</code>) are declared in the <code>ICanlib</code> interface, but all constants are declared directly in the <code>Canlib</code> class. This is done mostly to avoid having to write <code>Canlib.ICanlib.INSTANCE.constant_name</code> rather than just <code>Canlib.constant_name</code>.</p>
+
+<p>Since Java lacks pointers, JNA introduces the <code>Pointer</code> and <code>ByReference</code> classes to simulate them. These are used in some of the Canlib method declarations.</p>
+
+<h2>The wrappers</h2>
+<p>The <code>Handle</code> and <code>Message</code> classes are introduced to wrap calls to Canlib and to help programmers avoid having to write C-style code in Java. There's also an exception class: <code>CanlibException</code>. This exception is thrown whenever a Canlib call returns an unexpected error. </p>
+
+<p>The <code>Message</code> class is rather simple: it contains information about a message. All fields are <code>public final</code> so you just create new objects whenever you want to send a new message and access the instance variables directly rather than using getters. The class has two constructors: one with a timestamp for creating received messages and one without for creating messages to write to a channel. It also has a boolean method for checking if a message is an error frame.</p>
+
+<p> The <code>Handle</code> class is a bit more complex. It represents a channel handle and wraps all the calls to Canlib which use such a handle. Instead of returning a status value, all methods throw exceptions if something goes wrong. The methods that return something do so using a return value rather than an output parameter.</p>
+
+<p>For example, setting up a channel and reading a message with the wrapper is done like this: </p>
+<code>
+try{ <br />
+  Handle handle = new Handle(0); <br /> 
+  handle.setBusParams(Canlib.canBITRATE_250K, 0, 0, 0, 0, 0); <br /> 
+  handle.busOn(); <br /> 
+  Message m = handle.readMessage(); <br /> 
+} catch(CanlibException e){ <br /> 
+  e.printStackTrace(); <br /> 
+}
+</code>
+<p>Without the wrapper, it looks like this: </p>
+<code>
+ Canlib.ICanlib canInstance = Canlib.ICanlib.INSTANCE; <br /> 
+ canInstance.canInitializeLibrary(); <br /> 
+ handle = canInstance.canOpenChannel(0, Canlib.canOPEN_ACCEPT_VIRTUAL); <br /> 
+ status = canInstance.canSetBusParams(handle, Canlib.canBITRATE_250K, 0, 0, 0, 0, 0); <br /> 
+ displayError(status); <br /> 
+ status = canInstance.canBusOn(handle); <br /> 
+ displayError(status); <br /> 
+ IntByReference id = new IntByReference(); <br /> 
+ byte[] data = new byte[8]; <br /> 
+ IntByReference dlc = new IntByReference(); <br /> 
+ IntByReference flags = new IntByReference(); <br /> 
+ LongByReference time = new LongByReference(); <br /> 
+ LongByReference timeout = new LongByReference(100); <br /> 
+ status = canInstance.canRead(handle, id, data, dlc, flags, time); <br /> 
+ displayError(status); <br /> 
+</code>
+
+<h2>Examples</h2> 
+<p>We've provided a few examples to get you started: a <a href="CanlibWrapperTest/1_HelloWorld.html">Hello world</a> program which just opens a channel and writes a message to it, a  <a href="CanlibWrapperTest/2_CanDump.html">dumper program</a> which listens for message on channels and prints them to the screen and a  <a href="CanlibWrapperTest/3_CanIoCtl.html">program</a> which demonstrates the <code>canIoCtl</code> method calls (which are wrapped in the <code>Handle</code> class). There are also two examples that do the same things as the first two programs, but without the wrapper classes. </p>
+
+<p>The code for all the samples can be found as an <a href="CanlibWrapperTest">Eclipse project</a>.</p>

@@ -1,0 +1,31 @@
+<h1>Convert log events to different formats</h1>
+
+<a href=".">Source code</a>
+
+<p>This program converts CAN frames from KME50 format to plain ASCII.</p>
+
+<h2>Preliminaries</h2>
+<p>To use KvlcLib to convert log files, you need to add <code>Kvaser.KvlcLib.dll</code> as a reference to the project. Like with <code>Kvaser.CanLib.dll</code>, you need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.KvlcLib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.KvlcLib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Create a new converter</h2>
+<p>We use <code>CreateConverter</code> and <code>SetInputFile</code> to create a new converter and set the input format to KME50.</p>
+
+<h2>Setting conversion properties</h2>
+<p>We want to set some of the properties supported by <code>FILE_FORMAT_PLAIN_ASC</code> and we do this in a function <code>setConvertionProperties</code>. This function will
+set properties such as always overwriting the result, print id and data in hexadecimal format and convert the first five channels.</p>
+
+
+<h2>Converting CAN frames</h2>
+<p>With all properties set, we call <code>ConvertEvent</code> until it returns <code>Status.EOF</code>.
+
+<h2>Check the conversion result</h2>
+<p>We want to check if data was logged during the logging operation or if CAN FD data frames were truncated to 8 bytes and
+we do this in the function <code>checkConvertionStatus</code>.
+
+<h2>Delete converter</h2>
+We call <code>DeleteConverter</code> to delete the converter and close ny open files.

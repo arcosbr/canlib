@@ -1,0 +1,32 @@
+<h1>
+A Hello World t program
+</h1>
+
+<a href=".">Source code</a>
+
+<p>This sample demonstrates how to open a channel and send a message using the t programming language.</p>
+
+<h2>Preliminaries</h2>
+<p>To use CanLib you need to add <code>Kvaser.CanLib.dll</code> as a reference to the project. You need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.CanLib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.CanLib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Usage</h2>
+<p>We have included the compiled t program in the <code>Bin/Debug</code> directory of the project, so it is possible to just run the program through Visual Studio or by running the <code>.exe</code> file directly. You might have to change the channel number for loading the device, depending on your configuration. If you have connected the first channel on the device to some other channel, you can use CanKing or a similar program to view the message.</p>
+
+<p>You can also load and run the program on your device using <code>tutil</code>.
+
+<h2>The C# program</h2>
+<p>When we want to run a script on a device, we first open a Canlib channel as usual. We then stop and unload any script that might already be running in the slot, using <code>kvScriptStop</code> and <code>kvScriptUnload</code>. </p>
+
+<p>We load the script using <code>kvScriptLoad</code>. This will put the script into the specified slot on the device. Then we use <code>kvScriptStart</code> to start it. We wait for 500 ms for the script to execute and then stop and unload it.</p>
+
+<h2>Understanding the t program</h2>
+<p>When the program is started, the <code>on start</code> hook is executed. Here, we set the bitrate of the channel as usual before transmission. The channel is stored as a global variable in the <code>variables</code> block. Variables declared here work just like global variables in other languages. After setting the bitrate, we call <code>canSetBusOutputControl</code> to set the driver mode. Then we go on bus and send a message. Note that the channel number in the program refers to the channel from the device's point of view. This channel might be referred to by a different number on your computer. </p>
+
+<p>The t programming language contains a special type for messages. It contains a message's channel, identifier, length, data and flags. We create a message and use <code>canWrite</code> to write it to the channel. </p>
+
+<p>The <code>on stop</code> hook is executed when the program is stopped. Here, we just put the channel off bus. </p>

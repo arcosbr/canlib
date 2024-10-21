@@ -1,0 +1,34 @@
+<h1>
+CanDump
+</h1>
+
+<p> <a href=".">Source code</a></p>
+
+<p>This program listens for incoming messages. It will keep track of the number of messages with id 123 received on the device's first channel and print the total count. If any other message is received, it will print its id and channel.</p>
+
+<h2>Preliminaries</h2>
+<p>To use CanLib you need to add <code>Kvaser.CanLib.dll</code> as a reference to the project. You need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.CanLib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.CanLib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Running the program</h2>
+<p>We have supplied a C# program which runs the t program and prints all its output. It stops after 10 seconds. Try sending a message to the first channel of the device during this time.</code>
+
+<p>You can also run the program through <code>tutil</code>. Since this program prints information about messages, you need to add the <code>-listen</code> flag to <code>tutil.exe</code> to listen for output. Try <code>tutil.exe -channel=M -slot=N -load 2_CanDump.txe -start -listen 30 -stop -unload</code> to start the program on channel <code>M</code> and slot<code>N</code>, print any incoming messages for 60 seconds and then stop the program and unload.</p>
+
+<h2>The C# program</h2>
+<p>We start and stop the script just like in the previous example. The main difference is what happens while running the script. Here, we use <code>kvScriptRequestText</code> to start subscribing to output from the t program. Once we've done this we enter a loop where we print all incoming messages every 100 ms. This is done using <code>kvScriptGetText</code>. In case we receive more than one message during one iteration of the loop, we have an inner loop that prints all received messages. Once the loop has passed 100 iterations (10 seconds), we stop the script and exit as usual.</p>
+
+<h2>Setup and teardown</h2>
+<p>When the t program is started, we set the bitrate and the driver mode, then go on bus. When the program exits, we go off bus. This works just like in the previous example.</p>
+
+<h2>Receiving a message</h2>
+<p>The <code>on CanMessage&ltchannel&gt 123</code> hook will execute whenever we receive a message on channel 0 with the identifier 123. Here, we declare the variable <code>count</code>, which keeps track of how many matching messages we have received. Note that this variable will not be reset the next time the hook is executed: the <code>static</code> keyword means that it will only be initialized once and keep its value for the next call. This is useful whenever you want a variable that should only be used in one hook but still keep its value between calls.</p>
+
+<p>The <code>on CanMessage<*> *</code> hook will execute whenever a message not matching any other hook is received. Here, we use the <code>this</code> keyword to refer to the received message, which has the type <code>CanMessage</code>. From this structure, we extract the channel number and identifier and print them to the screen. </p>
+
+<h2>Exercise</h2>
+<p>Creating a <code>on CanMessage</code> hook with <code>[*]</code> as its message will always match, even if there is a more specific hook for the message. If there is such a hook, it will execute after the <code>[*]</code> hook. Feel free to try it out. </p>

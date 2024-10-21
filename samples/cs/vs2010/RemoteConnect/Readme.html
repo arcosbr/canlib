@@ -1,0 +1,22 @@
+<h1>Remote connection</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This sample demonstrates how to connect to a remote device (such as a Blackbird v.2) and display any incoming messages. If you are unfamiliar kvrlib, it is recommended that you take a look at <a href="../Cs_kvrConnect/Readme.html">kvrConnect</a> first. </p>
+
+<h2>Usage</h2>
+<p>Run the program with the device's IP address as argument, or change the default IP address in the code.</p>
+
+<h2>Connecting to the device</h2>
+<p>The IP address is converted to a <code>Kvrlib.Address</code> object using the <code>AddressToString</code> method and put into an array. We then tell Kvrlib to use this address for discovery with a call to <code>DiscoverySetAddresses</code>.</p>
+
+<p>After starting discovery, we go through each found device with <code>DiscoveryGetresults</code>. This will return a <code>DeviceInfo</code> object which contains information about the device, including its address. Once we've found the device we're looking for, we save its index in the result list.</p>
+
+<p>To connect to the device, we set the <code>request_connection</code> field to 1. We then store the device list. If we have Kvaser Hardware open, the device will appear there within a few seconds. </p>
+
+<h2>Opening the device with CAN</h2>
+<p>Now we need to find which channel the device has appeared on. This is done in the <code>FindChannel</code> method. Here we go through all the CAN channels, use <code>canGetChannelData</code> to find the EAN and serial number of the device and check if it matches those of the remote device. It might be the case that the device hasn't appeared to Canlib yet and thus cannot be found. If this happens, Canlib is unloaded and -1 is returned. In this case, the program tries again after 500 ms.</p>
+
+<p>Once the device has been found, we connect to it and display any incoming messages. This part is more or less identical to <a href="../../../../Getting started/CSharp/VS2010/2_CanDump/Readme.html">part 2</a> in the tutorial. </p>
+
+<p>To disconnect the device, we set the <code>request_connection</code> field to 0 and call <code>DiscoveryStoreDevices</code> again before closing discovery and unloading the libraries.</p>

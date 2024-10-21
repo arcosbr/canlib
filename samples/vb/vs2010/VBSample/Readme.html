@@ -1,0 +1,40 @@
+<h1>
+A Visual Basic sample program
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This sample is intended to demonstrate some of the Canlib commands in a Visual Basic application.</p>
+
+<h2>Usage</h2>
+<p>Pressing "Initialize" will open up two channels and go on bus. This needs to be done before doing anything else.</p>
+
+<p>The "Card type" button will display the hardware type if the device on channel 0.</p>
+
+<p>Pressing "Bitrate" will display the bitrate the the channel has (125 kb/s by default).</p>
+
+<p>Pressing "Write msg" will create a message to write on channel 0. Pressing "Write 100 messages" will put 100 messages on the channel. The messages are identical every time. When channel 1 receives a message, the "Received message" radio button will be checked. </p>
+
+<p>Press "Read msg" to read all the messages on channel 1 and display the number of received messages.</p>
+
+<h2>Initializing</h2>
+<p>When the "Initialize" button is pressed, we set up everything we need to before we start writing and reading messages. First, we call <code>canInitializeLibrary</code>. This always needs to be done before calling any Canlib functions. </p>
+
+<p>Next, we open up channels 0 and 1 using <code>canOpenChannel</code>. This call returns an <code>Integer</code> known as a handle which we use in subsequent calls to Canlib. If something goes wrong, the handle will be a negative number so it is usually a good idea to check this. However, most error handling in this sample is omitted to make the code easier to understand. </p>
+
+<p>With our handles, we set the bus speed on the channels to 125 kb/s. This is done with the <code>canSetBusParams</code>. The other parameters are set as 0 and are not really important right now. Now our channels are set up and we can call <code>canBusOn</code> to go on bus.</p>
+
+<p>The last thing we do is to call <code>canSetNotify</code> to receive notifications when a message is received. This method takes the handle to channel 1, the <code>Form</code> object's event handle and a parameter for the type of events we want to listen to. Whenever a message is received on channel 1, the window's <code>WndProc</code> is called. In order to make something happen on an event, we override this method. In this case, we check if the event is from Canlib and if it is, checks the radio button. </p>
+
+<h2>Checking card type and bit rate</h2>
+<p>We use the call <code>canGetChannelData</code> with the <code>canCHANNELDATA_CARD_TYPE</code> parameter to get the card type of the device on channel 0 and store it in a variable. This variable is an integer, so we use a <code>switch</code> statment to get the matching name.</p>
+
+<p>To get the bitrate, we use the <code>canGetBusParams</code>. This takes a handle and writes the bitrate (and the other bus parameters) to the output parameters. </p>
+
+<h2>Writing messages</h2>
+<p>A CAN message consists of an identifier, an array of bytes (the message data), the dlc (length of the array) and optional flags. The <code>canWrite</code> method takes the channel handle and all of these components and writes a message to the channel.</p>
+
+<p>When the "Write 100 messages" button is pressed, the only thing that happens is that we use a <code>For</code> loop to call <code>canWrite</code> 100 times. It doesn't use any additional Canlib features. However, it is aso possible to use object buffer for multiple transmissions. <!TODO: Link></p>
+
+<h2>Reading messages</h2>
+<p>To read a message from a channel, we call <code>canRead</code>. This takes a handle, the message parameters as well as a timestamp variable which it writes to. Like most Canlib calls, it returns a <code>canStatus</code> which tells us if the operation was successful. In this case, it returns <code>canOK</code> if it was successful, <code>canERR_NOMSG</code> if there were no messages on the channel, or some other error status of something else went wrong. To get the number of received messages, we use a <code>While</code> loop which increments a counter each time we successfully read a message. </p>

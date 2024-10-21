@@ -1,0 +1,8 @@
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Pcmcia\Parameters]
+"IrqRouteToPciController"=dword:00000008
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\KvaserCommonOptions]
+"LAPcanNoAddressRestriction"=dword:00000001
+

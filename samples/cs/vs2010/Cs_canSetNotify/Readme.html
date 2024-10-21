@@ -1,0 +1,20 @@
+<h1>
+Asynchronous notifications and callback delegates
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This program shows how to use <code>canSetNotify</code> to add an event handle which listens for incoming messages. This is a Windows Forms application, and the program logic is found in Notify.cs. </p>
+
+<h2>Usage</h2>
+<p>Open the program and press "Open Channel". The program will listen for messages on channel 0 with a bitrate of 250 kb/s. Whenever a message is received, it will be displayed on the screen and a response will be transmitted. </p>
+
+<h2>Using <code>canSetNotify</code></h2>
+<p>When we initialize the channel, we call <code>canSetNotify</code> to receive notifications whenever some events occur. In this case, we pass the <code>canNOTIFY_RX</code> code, which means that we will get notifications when a message is received.</p>
+
+<p>When we call <code>canSetNotify</code>, we pass on the channel handle as well as the <code>Handle</code> of the window. Whenever an event occurs on the channel, this <code>Handle</code> makes sure that the window's <code>WndProc</code> is called. The <code>WndProc</code> method is is part of the <code>Form</code> class. We override it to add whatever actions we want to perform when we receive a message.  </p>
+
+<p><code>WndProc</code> takes one parameter of the type <code>Message</code>. This message contains information about what type of event has occured. In this case, we want to verify that the message is from Canlib, wo we check if the message's <code>Msg</code> field is equal to <code>WM__CANLIB</code>. If that is the case, we know that there is at least one message in the RX buffer, so we read all the messages and display them.</code>
+
+<h2>More information</h2>
+<p>Further information can be found in the section on asynchronous notifications in the Canlib help file.</p>

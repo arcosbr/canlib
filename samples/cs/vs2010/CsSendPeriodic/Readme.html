@@ -1,0 +1,44 @@
+<h1>
+Periodic tranmissions
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This program demonstrates three different way of sending periodic messages: object buffers, periodic threads and multimedia timers (see the class MMTimer for details). </p>
+
+<h2>Usage</h2>
+<p>The program is used in the command line and can take the following arguments: </p>
+<ul>
+<li>-O: select transmitting channel (default: 0)</li>
+<li>-R: select receiving channel (default: 1)</li>
+<li>-T: select transmit method (default: 0, object buffers)</li>
+<li>-m: set multimedia precision</li>
+<li>-h: print help</li>
+</ul>
+<p>The program reads the input parameters, starts the selected tranmission method and goes into a loop which reads all the messages. Regardless of which transmission method is used, the transmitting channel will transmit one message every 1 ms and another one every 10 ms. The user can press <code>Escape</code> to break the loop or <code>+</code> to increase the first byte of the message data with one. Closing the timer will also cause the periodic transmissions to stop and the program to exit.</p>
+
+<h2>Transmitting using object buffers</h2>
+<p>This method is demonstrated in the <code>TransmitMethod1</code> method.</p>
+
+<p>Object buffers are a feature in CAN devices which can be used by Canlib to send periodic messages or respond to incoming messages automatically.</p>
+
+<p>To create an object buffer for periodic messages, we call <code>canObjBufAllocate</code> with our channel handle and the flag <code>canOBJBUF_TYPE_PERIODIC_TX</code>. This will return a handle to a new object buffer. We then set the period (in microseconds) with a call to <code>canObjBufSetPeriod</code> and set the message using <code>canObjBufWrite</code>. After that, we go on bus and use <code>canObjBufEnable</code> on each of the object buffers to start the transmission. </p>
+
+<p>Since the object buffer doesn't use a reference to the message variables, we need to update the buffer when the message is changed. This is done in the <code>UpdateObjBuffer</code> method, where <code>canObjBufWrite</code> is called with the new message. This can be done while the object buffer is being used.</p>
+
+<p>To stop the transmissions, we call <code>canObjBufDisable</code> and then <code>canObjBufFreeAll</code>. The first call will just cause the buffers to stop transmitting while the second while remove them completely. </p>
+
+<h2>Transmitting using a periodic thread</h2>
+<p>This method is demonstrated in the <code>TransmitMethod2</code> method.</p>
+
+<p>This method spawns a new thread which in every iteration waits one millisecond for a shutdown event, then sends its message(s). It has a counter which increases every iteration to determine whether or not to send the second message.</p>
+
+<p>To stop transmitting, we just set the shutdown event that the thread waits for (shown in <code>CloseMethod2</code>).</p>
+
+<h2>Transmitting using multimedia timers</h2>
+<p>This method is demonstrated in the <code>TransmitMethod3</code> method.</p>
+
+<p>To use multimedia timers, we first create two <code>MMTimer</code> objects and add an <code>EventHandle</code> to each of them. These handles each have a delegate which is <code>Timer1Handler</code> and <code>Timer2Handler</code>, respectively. These handlers just send their respective messages when called. We then start the timers and specify how often the messages should be transmitted. Note that we create a second channel handle to transmit on, since each handle shouldn't be used in more than one thread. To stop, we use the timers' <code>Stop</code> methods.</p>
+
+<h2>Listening for messages</h2>
+<p>Listening for messages happens in the main thread. It is done by simply having a loop which continously calls <code>canReadWait</code> to see if there is a message on the queue. This method is explained in <a href="../../../../Getting Started/CSharp/VS2010/2_CanDump/Readme.html">part 2</a> of the tutorial. </p> 

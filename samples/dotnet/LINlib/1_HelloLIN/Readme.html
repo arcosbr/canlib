@@ -1,0 +1,34 @@
+<h1>Hello LIN</h1>
+
+<a href=".">Source code</a>
+
+<p>This sample demonstrates how to open a channel on a LIN device, use it as a master device and write a message to the channel.</p>
+
+<h2>Preliminaries</h2>
+<p>To use Linlib to communicate with LIN devices, you need to add <code>Kvaser.LinLib.dll</code> as a reference to the project. Like with <code>Kvaser.CanLib.dll</code>, you need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.LinLib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.LinLib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Step 1: Channel setup</h2>
+<p>Like with Canlib, Linlib must be initialized before calling any methods. We do this by calling <code>linInitializeLibrary</code>. If we miss this step or if Linlib cannot be initialized, any subsequent call will return an error.</p>
+
+<p>The first thing we do is to open up a channel with a call to <code>linOpenChannel</code>. This call takes the channel number as the first parameter and the device mode as the second. In this case, we want to run the device as master so we use <code>LIN_MASTER</code> in our call. Just like in Canlib, this returns a handle to the channel if successful. If something goes wrong, it will return a negative error status. </p>
+
+<p>Next, we set the bitrate for the channel. This is done by calling <code>linSetBitrate</code> with the handle and the desired bitrate (in bits per second) as parameters. The bitrate can be between 1000 and 20000 bits per second. Once this is done, we put the channel on bus using <code>linBusOn</code>.
+
+<h2>Step 2: Writing a message</h2>
+<p>Writing a message to the channel is done by calling <code>linWriteMessage</code>. This call takes the handle, a message identifier (an integer), a message body (an array of up to eight bytes) and the length of the message body as parameters. Note that the device must be in master mode to write a message to the channel. </p>
+
+<h2>Step 3: Reading a message</h2>
+<p>Unlike in Canlib, a device will "hear" its own messages by default. To read the message we just wrote to the channel, we use <code>linReadMessageWait</code>. This method blocks until a message appears on the channel or until a timeout occurs (100 ms in our case). A non-blocking method called <code>linReadMessage</code> also exists. </p>
+
+<p>When we read the message, we receive the id, message body and length that we wrote to the channel, along with  a flag and a <code>LinMessageInfo</code> object containing information about the message. The flag should be 1 in our case, indicating that it is a message that we ourselves have written, and not something from another device. The <code>LinMessageInfo</code> contains, among other things, a timestamp of the message, a checksum and the bitrate. </p>
+
+<h2>Step 4: Closing the channel</h2>
+<p>Once we have written and read our message and are done with the channel, we go off bus using <code>linBusOff</code> and close the channel with <code>linClose</code>.</p>
+
+<h2>Further information</h2>
+<p>More details on Linlib is available in the Canlib help file, under "Modules -> LIN".</p>

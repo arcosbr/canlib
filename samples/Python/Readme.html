@@ -1,0 +1,17 @@
+<h1>Canlib Python tutorial</h1>
+
+<h2>Welcome!</h2>
+<p>This tutorial is intended to demonstrate how to use some of the most important parts of Canlib. </p>
+
+<h2>The Canlib wrapper</h2>
+<p>In order to make calls to Canlib, we have provided a wrapper in <a href="../../Python/canlib.py">canlib.py</a>. The most important parts of this wrapper is the <code>canlib</code> class, which initializes the library and wraps the calls to the <code>dll</code> file, and the <code>canChannel</code> class, which represents a channel handle and wraps most calls which take a channel handle as a parameter. </p>
+
+<p><a href="../../Python/Readme.html">Wrappers</a> for other libraries in the SDK are also available.</p>
+
+<h2>The sample programs</h2>
+
+<h3><a href="1_HelloWorld.html">Part 1: Hello World!</a></h3>
+<p>This program shows how to open a channel and write a message to it. </p>
+
+<h3><a href="2_CanDump.html">Part 2: CanDump</a></h3>
+<p>This program opens a channel and prints any incoming messages on it. </p>

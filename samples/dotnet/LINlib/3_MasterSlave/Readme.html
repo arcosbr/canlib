@@ -1,0 +1,25 @@
+<h1>Master-Slave interaction</h1>
+
+<a href=".">Source code</a>
+
+<p>This sample shows how to setup one master and one slave device and have them interact with eachother.</p>
+
+<h2>Preliminaries</h2>
+<p>To use Linlib to communicate with LIN devices, you need to add <code>Kvaser.LinLib.dll</code> as a reference to the project. Like with <code>Kvaser.CanLib.dll</code>, you need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.LinLib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.LinLib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Step 1: Setup</h2>
+<p>Setting up the channels is done just like in the previous examples, using <code>linOpenChannel</code> with the second parameter specifying the mode for the device.</p>
+
+<h2>Step 2: Sending and receiving messages</h2>
+<p>We first send five messages from the master to the slave and then print all messages on both the master and the slave using the <code>PrintAllMessages</code> method. This method just calls <code>linReadMessage</code> and prints everything as long as there are messags on the channel. </p>
+
+<h2>Step 3: Setting up a response message</h2>
+<p>A slave device can store a number of response messages which are sent whenever the master requests a message with the corresponding identifier. This is done by calling <code>linUpdateMessage</code> with the slave handle and the message's identifier, body and length as parameters. We can then call <code>linRequestMessage</code> with the master's handle and the message identifier to make the master send a request for this message, which the slave will then send. </p>
+
+<h2>Step 4: Sending wakeup frames</h2>
+<p>The last function demonstrated in the program is the sending of wakeup frames. This is done using <code>linWriteWakeup</code> method. This will send a message with the <code>LIN_WAKEUP_FRAME</code> flag set. </p>

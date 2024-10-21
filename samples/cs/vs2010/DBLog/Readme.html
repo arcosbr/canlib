@@ -1,0 +1,16 @@
+<h1>A database logger</h1>
+<a href=".">Source code</a>
+
+<p>This program listens for messages on a channel, uses a database for interpreting those messages and writes the physical values of the signals to a .csv file.</p>
+
+<p>This is a direct continuation of the <a href="../Logger/Readme.html">Logger</a> example. It also borrows a lot from <a href="../../../../Getting Started/CSharp/VS2010/7_DBWpfApplication/Readme.html">part 7</a> in the tutorial. </p>
+
+<h2>Usage</h2>
+<p>Enter a channel number and press "Initialize". Then, select an output file and a database file. Choose a message from the drop-down menu and press "Load" and the "Start logging". The program will listen to any incoming messages matching the identifier of the database message, interpret them accordingly and print the physical values to the screen as well to the selected output file.</p>
+
+<h2>Interpreting the data</h2>
+<p>Just as in the previous example, we create a CSV header when we start and a CSV record for each incoming message. The difference is that the CSV header contains the names of all the signals in the message and the records contain the physical values for each signal. </p>
+
+<p>Getting the names of all the signals is done by iterating through all the signals of the message handle and calling <code>GetSignalName</code> on each of them. The iteration is done by first calling <code>GetFirstSignal</code> and then <code>GetNextSignal</code> as long as these calls return the OK status. When there is no next signal, these calls will return the error status <code>vaDbErr_NoSignal</code>.</p>
+
+<p>Getting the signal values is done by iterating through the signals as described above and using <code>GetSignalValueFloat</code> with the message data as parameter. This will output a <code>double</code> value with the signal's physical value.</code>

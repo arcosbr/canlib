@@ -1,0 +1,32 @@
+<h1>
+KvrConnect
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>
+This program demonstrates how to use the Kvaser Remote Device API to find information about devices.
+</p>
+
+<h2>Preliminaries</h2>
+<p>
+In order to build this program, you will need to have canlib32.dll, Kvrlib.dll, irisdll.dll ,irisflash.dll and libxml2.dll in your path or have canlib SDK installed. 
+</p>
+
+<h2>Initialization and setup</h2>
+<p>Before we can use Kvrlib, we need to initialize it with <code>InitializeLibrary</code>. We then use <code>DiscoveryOpen</code> to create a discovery handle. This handle is used for discovering devices. </p>
+
+<p>In the <code>SetupBroadcast</code> method, we demonstrate how to set up the addresses used for broadcast. We first get the default addresses for discovering devices on with a call to <code>DiscoveryGetDefaultAddresses</code>, which gives an array of addresses. We then add one hard-coded address (you can change this part if you want). The addresses have the type <code>Kvrlib.Address</code>, which contains both the actual address and information about the address type (MAC, IPv4, IPv4 with a port number or IPv6). We can convert the addresses to and from strings using <code>StringFromAddress</code> and <code>AddressFromString</code>. We then call <code>DiscoverySetAddress</code> to use these addresses for device discovery. </code>
+
+<h2>Discovering devices</h2>
+<p>In the <code>DiscoverDevices</code> method, we first call <code>DiscoveryStart</code> to create a list of available devices. Each subsequent call to <code>DiscoveryGetResults</code> will give return one <code>DeviceInfo</code> object until we have iterated through all the devices. Using the <code>DumpDeviceInfo</code> method, we print the information from each object. This information includes whether or not we are using the device, which we check by first checking if the device is not free and then calling <code>IsUsedByMe</code> to check if any of our channels leads to the device. After this, there is a section which has been commented out. It demonstrates how to set the device's password and encryption key. If you want to try them out, you can uncomment them. </p>
+
+<p>After we've gone through all the devices, we store them using <code>DiscoveryStoreDevices</code> so we can discover them again during the next search. </p>
+
+<p>Before we're done, we call <code>DiscoveryClearAtExit</code>. This method's argument determines whether or not the collection of devices we just stored should be cleared when the program terminates or not. In this case, we set it to <code>false</code> since we want to keep it, but you could also try to set it to <code>true</code> if you want to.</p>
+
+<p>After we're done with our discovery handle, we close it with <code>DiscoveryClose</code>.</p>
+
+<h2>Testing the helper service</h2>
+<p>The last thing the program does is to test the helper service. This service is turned on by default. Here, we check its status, then stop it, start it again and check its status once more. To be able to perform some operations on service, you might need to gain administrator privileges.</p>
+

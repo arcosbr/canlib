@@ -1,0 +1,16 @@
+<h1>
+Part 8: Sending messages with databases
+</h1>
+
+<a href=".">VS2010 project</a>
+
+<p>The previous two examples showed how to receive messages with signal values and extract these values using a database. In this example, we will use a database to create messages from signal values. </p>
+
+<h2>Using the program</h2>
+<p>Load the database file, select a message and initiate the channel like in the previous example. Enter some (valid) values for the different signals and press "Send message". You can also use the "Start auto transmit" button to transmit messages automatically. If the "Randomize" button is checked, the values of the signals will change every time a message is sent. Feel free to run this program in parallel with the program from part 7. </p>
+
+<h2>Understanding the program</h2>
+<p>Reading the message and the signals works exactly like in the previous example. The main difference here is that we read the signal values and use them to construct a message. The signals with their values are stored in a global list, and the values are updated every time the content in one of the textboxes changes. When we want to construct a message, we create a byte array and call <code>StoreSignalValuePhys</code> with each signal handle, the array and the signal's physical value as arguments. This updates the byte array with the signal's value. We then transmit the message with the selected message's identifer to the channel. </p>
+
+
+<p>Try running this program in parallel with the one in <a href="../6_DBApp/Readme.html">Part 6</a> or <a href="../7_DBWpfApplication/Readme.html">7</a> for a complete demonstration off how to transmit physical values over CAN interfaces.</p>

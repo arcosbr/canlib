@@ -1,0 +1,18 @@
+<h1>Logging with t script</h1>
+
+<a href="logtemp.t">t script</a>
+
+<p>This simple example shows how to use the t programming language to start and stop logging. The t script uses a database to interpret messages, and has hooks which control the logging.</p>
+
+<p>The database contains a message called <code>StatusMessage</code> which contains two signals: <code>Temperature</code> and <code>Pressure</code>. When a <code>StatusMessage</code> with a <code>Temperature</code> value over 100 is received, the logging starts. The logging can be turned off by sending a message with id 1 to the Memorator.</p>
+
+<p>If you want to compile the t program yourself using the <code>scc</code> compiler, you need to include the database file: <code>scc.exe -dbase status.dbc logtemp.t</code></p>
+
+<h2>Usage</h2>
+<p>Open the Kvaser Memorator Config Tool and connect to the device. Under "Scripts", add the <code>logtemp.txe</code> file and check the "Active" box. Make sure that the "Log everything" box under "Log configuration" is not checked. Then, press "Download" to download the configuration to the device and then "Disconnect". </p>
+
+<h2>Start logging</h2>
+<p>The <code>on CanMessage<*> StatusMessage</code> hook is executed when a <code>StatusMessage</code> is received on any channel. Here we check if the <code>Temperature</code> signal's physical value is over 100. If it is, and the logger is idle, we call <code>loggerStart</code>, which will start logging of all incoming messages.</p>
+
+<h2>Stop logging</h2>
+<p>The second hook has the <code>prefilter</code> keyword attached, which ensures that the message will not be picked up by any other hook or trigger. Here, we use <code>filterDropMessage</code> to remove the message from the logging queue (which means that messages with identifier 1 will not be logged) and call <code>loggerStop</code> to stop the logging.</p>

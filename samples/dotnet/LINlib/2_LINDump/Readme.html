@@ -1,0 +1,31 @@
+<h1>Receiving messages</h1>
+
+<a href=".">Source code</a>
+
+<p>Here, we demonstrate how to setup a LIN device in slave mode and use it to read incoming message.</p>
+
+<h2>Preliminaries</h2>
+<p>To use Linlib to communicate with LIN devices, you need to add <code>Kvaser.LinLib.dll</code> as a reference to the project. Like with <code>Kvaser.CanLib.dll</code>, you need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.LinLib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.LinLib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Step 1: Setup</h2>
+<p>Like in the previous example, we use <code>linOpenChannel</code> to open the channel, but here we pass the <code>LIN_SLAVE</code> parameter to indicate that we want to use the device in slave mode. Setting the bitrate and going on bus works just like in the previous example.</p>
+
+<h2>Step 2: Listening for messages</h2>
+<p>In the <code>DumpMessageLoop</code> method, we declare some variables for holding the incoming messages. These include an identifier, the message length (dlc), the message body, flags which tell which type of message we receive, as well as a <code>LinMessageInfo</code> object which contains more information about the message.</p>
+
+<p>To read a message from the channel, we call <code>LinReadWait</code>. This method listens for messages on the channel for a set period of time (100 ms in this case) and puts the message into the previously defined variables. If no message is received before the timeout, it will return a <code>linERR_NOMSG</code> status code.</p>
+
+<h2>Step 3: Printing messages</h2>
+<p>In the <code>PrintMessage</code> method, we first check if the message was transmitted by the current device or if another device sent it. As demonstrated during the previous example, LIN devices can "hear" messages that they have transmitted. This check is done by checking if the <code>TX</code> or <code>RX</code> bits in the <code>flag</code> are set. To do this, we use the bitwise AND operator (&) on the flag field. Similarly, we check for various error codes as well as check if the message is a wakeup frame. </p>
+
+<p>If none of the error or wakeup flags are set, we print simply print the various fields in the message.</p>
+
+<h2>Step 4: Exiting the program</h2>
+<p>We break the reading loop if <code>LinReadWait</code> returns something other than <code>linOK</code> or <code>linERR_NOMSG</code>, since that would indicate that something has gone wrong. We also exit if the user presses the Escape key.</p>
+
+<p>Once the loop is finished, we go off bus and close the channel.</p>

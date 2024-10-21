@@ -1,0 +1,15 @@
+<h1>
+Events
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This program is a simple example of how to use events to listen for messages. It works almost like the one in <a href="../../../../Getting started/CSharp/VS2010/5_WpfAppEvents/Readme.html">part 5</a> in the tutorial but lacks a GUI. </p>
+
+<h2>Usage</h2>
+<p>Run the program in a terminal. It will open channel 0 with a bitrate of 250 kb/s. Any messages received on channel 0 will be printed.</p>
+
+<h2>Using event handles</h2>
+<p>To set up an event handle, we use a call to <code>canIoCtl</code> with the <code>canIOCTL_GET_EVENTHANDLE</code> function code, which will return a pointer to an event handle. This handle is then used to create a <code>CanLibWaitEvent</code> object. The <code>CanLibWaitEvent</code> class extends the <code>WaitHandle</code> class, which wraps the event handle. </p>
+
+<p>To wait for events on the channel, we use the <code>WaitAny</code> method. This will return an index if one of the handles in its argument received an event (we only have one, so it's always 0 in this case). If not, it will return the constant <code>WaitHandle.WaitTimeout</code> which means it timed out. If the call returns 0, we know an event has occurred on the channel so we print any messages in the receive buffer.</p>

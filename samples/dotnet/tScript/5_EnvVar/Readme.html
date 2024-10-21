@@ -1,0 +1,28 @@
+<h1>Environment variables</h1>
+
+<a href=".">Source code</a>
+
+<p>Environment variables are a feature in the t programming language which aids in communicating between t programs and between a t program and a program running on a PC. This sample demonstrates how to use them. </p>
+
+<h2>Preliminaries</h2>
+<p>To use CanLib you need to add <code>Kvaser.CanLib.dll</code> as a reference to the project. You need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.CanLib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.CanLib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Usage</h2>
+<p>Run the C# program with the channel and slot numbers as parameters. The default values for both are zero. The program will let you update the environment variables <code>text</code> and <code>value</code> through the command line, as well as print all the environment variables. </p>
+
+<h2>The t program</h2>
+<p>The t program contains declarations for the environment variables in the <code>envvar</code> block. In the <code>on start</code> hook, we initialize them. The <code>on envvar</code> hooks are executed whenever an environment variable is updated. Here, we just increase the counter variable by one.</p>
+
+<h2>The C# program</h2>
+<p>In the C# program, we ask the user for input and call the functions <code>UpdateText</code>, <code>UpdateValue</code> or <code>PrintEnvVars</code>, depending on what the user types.</p>
+
+<p>To access an environment variable, we use <code>kvScripEnvVarOpen</code> to receive a handle to it, along with the type and size of the variable. The type can be either int, float or string. When we are done with the environment variable, we call <code>kvScriptEnvVarClose</code>.</p>
+
+<p>Reading and writing to environment variables is done by calling <code>kvEnvVarGetInt</code> and <code>kvEnvVarSetInt</code> for integer variables, <code>kvEnvVarGetFloat</code> and <code>kvEnvVarSetFloat</code> for floating point variables and <code>kvEnvVarGetData</code> and <code>kvEnvVarSetData</code> for string values. The strings are expected to be byte arrays, so we need to convert them. One way to do this is shown in the program. Integer and float values can be passed and read as they are.</p>
+
+

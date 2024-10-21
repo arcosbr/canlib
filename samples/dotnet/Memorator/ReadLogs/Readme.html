@@ -1,0 +1,32 @@
+<h1>Reading log events</h1>
+
+<a href=".">Source code</a>
+
+<p>This program goes through all the log files in the device and saves their contents in plain text files.</p>
+
+<h2>Preliminaries</h2>
+<p>To use Kvmlib you need to add <code>Kvaser.Kvmlib.dll</code> as a reference to the project. Like with <code>Kvaser.CanLib.dll</code>, you need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.Kvmlib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.Kvmlib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Initialization</h2>
+<p>Like in the previous sample, we use <code>Initialize</code> to initialize Kvmlib and <code>DeviceOpen</code> to get a handle to the device.</p>
+
+<h2>Reading log files</h2>
+<p>The log files are mounted using <code>LogFileMount</code>. Here we need to supply the device handle, the index of the log file (starting from zero) and an integer where the number of events is saved.</p>
+
+<p> Next, we use <code>LogFileReadEvent</code> to iterate through the events in the log file. This method gives us a <code>Log</code> object which contains all the information about the logged event. The method will return <code>kvmERR_NOLOGMSG</code> when the end of the log file is reached. This way, we can iterate through all the events by calling <code>LogFileReadEvent</code> until it returns an error. </p>
+
+<h2>Getting info from log events</h2>
+<p>The <code>Log</code> objects belong to one of three subclasses depending on the type of event: </p>
+
+<ul>
+  <li><code>LogMsg</code> for received CAN messages. These contain all the fields of a CAN message, as well the number of the receiving channel</li>
+  <li><code>LogRtcClock</code> for clock messages. These contain the timestamp in seconds (<code>calendarTime</code>) and nanosecond (<code>timeStamp</code>).</li>
+  <li> <code>LogTrigger</code> for trigger messages. These contain the type of the trigger, the pre- and post times, a timestamp and the type of trigger event.</li>
+</ul>
+
+<p> To write the messages to the file, we check which of these subclasses the <code>Log</code> object belongs to, and then construct a string from the values of this subclass.</p>

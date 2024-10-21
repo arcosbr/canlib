@@ -1,0 +1,25 @@
+<h1>LIN Viewer</h1>
+
+<a href=".">Source code</a>
+
+<p>This program can be used to open a channel on a LIN device and display incoming messages. It uses event handles to listen for events on the channel.</p>
+
+<h2>Usage</h2>
+<p>Running the program will open two windows: the View window and the Output window. In the View window, you can view the various settings, as well as initializing the device. Under the Config tab, you can choose to use a device on a different channel, or change the device settings. The Output window will display any incoming messages once the device is on bus. </p>
+
+<h2>Opening a channel</h2>
+<p>Most of the code directly conserning LIN is in the <code>LinManip</code> class. The opening of a channel is done in the <code>InitChannel</code> method. Here, the channel is opened, the bit rate is set and the channel is put on bus. These parts are all explained in the LIN tutorial.  </p>
+
+<p>While initializing the channel, we also create an event handle which is used when listening for messages. To do this, we call <code>canIoCtl</code> with the <code>canIOCTL_GET_EVENTHANDLE</code> function code. This method needs a CAN handle as a device, so we we first call <code>linGetCanHandle</code> to obtain the CAN handle for the device.</p>
+
+<h2>Changing device settings </h2>
+<p>Using the <code>linSetupLIN</code> method, we can update the device's extedned checksum, variable dlc and bitrate settings while it is on bus. Note that the bitrate can only be changed this way if the device is in master mode. Slave devices must go off bus to change the bitrate.</p>
+
+<p><code>linSetupLIN</code> takes the channel handle, a flag value and the bitrate as parameters. The flag value is a combination of the <code>LIN_ENHANCED_CHECKSUM</code> and <code>LIN_VARIABLE_DLC</code> flags.</p>
+
+<h2>Listening for messages</h2>
+<p>Whenever a message is received, the <code>canEvent</code> will be triggered. This calls the <code>ProcessReceivedMessage</code> method, which uses <code>linReadMessage</code> to read all messages and send them to the <code>AddMessageData</code> method in <code>OutputView</code>, where they are displayed.</p>
+
+
+<h2>Further information</h2>
+<p>You can read more about how event handles are used in <a  href="../../../Getting Started/CSharp/vs2010/5_WpfAppEvents/Readme.html">part 5</a> of the Canlib tutorial. </p>

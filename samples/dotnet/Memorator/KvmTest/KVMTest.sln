@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KvmTest_net481", "KvmTest_net481\KvmTest_net481.csproj", "{574A170D-9878-417D-B17D-D116D9F26CD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KvmTest_net6", "KvmTest_net6\KvmTest_net6.csproj", "{193414CE-CBCD-4B6E-A4B7-1A7609AA8515}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{574A170D-9878-417D-B17D-D116D9F26CD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{574A170D-9878-417D-B17D-D116D9F26CD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{574A170D-9878-417D-B17D-D116D9F26CD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{574A170D-9878-417D-B17D-D116D9F26CD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{193414CE-CBCD-4B6E-A4B7-1A7609AA8515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{193414CE-CBCD-4B6E-A4B7-1A7609AA8515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{193414CE-CBCD-4B6E-A4B7-1A7609AA8515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{193414CE-CBCD-4B6E-A4B7-1A7609AA8515}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE99EFC8-00C0-4D90-8553-9EE1674A5972}
+	EndGlobalSection
+EndGlobal

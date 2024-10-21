@@ -1,0 +1,44 @@
+<h1>
+README: AutoTransmitExample
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This program demonstrates how to send periodic messages using object buffers.</p>
+
+<h2>Building the sample program</h2>
+<p>
+Open the VBSample.vbproj file in Visual Studio.NET.
+</p>
+<p>
+To be able to build the sample program you must make sure that the path to "Kvaser.CanLib.dll" in Visual Studio is correct. Do so by using:
+Project->VBSample Properties->Common Properties->Reference Path
+</p>
+<p>
+Remember to make sure Kvaser.CanLib.dll is somewhere in the path as it is required to run the application.
+</p>
+<p>
+It is now posible to build the project by using:
+Build->Build solution</p>
+<p>
+You can now run the program by using:
+</p>
+<p>
+Debug->Start
+</p>
+
+<h2>Testing the program</h2>
+
+<p>
+Choose a period for the messages and click on "Initialize Channel 0". Then, click "Update". This will make the object buffer transmit messages on Channel 0, with a bitrate of 250 kb/s.
+You can change the message at any time by modifying the parameters and pressing "Update". To change the period, you will need to first deactivate and then activate the channel.
+</p>
+
+<h2>Understanding the program</h2>
+<p>When activating the channel, the program opens the channel, sets the bitrate and creates a new periodic object buffer with a call to <code>canObjBufAllocate</code>. It then takes the channel on bus. </p>
+
+<p>The "Update" button sets period for the buffer with <code>canObjBufSetPeriod</code> and the message to be sent using <code>canObjBufWrite</code>. The first time it is pressed, it also enables the object buffer with a call to <code>canObjBufEnable</code>.
+</p>
+
+<p>To stop the object buffer from transmitting, we call <code>canObjBufDisable</code>. This won't remove the object buffer completely. To do so, we use <code>canObjBufFree</code>.</p>
+<p>Further information about the Canlib methods used can be found in the Object buffer section in the Canlib help file.</p>

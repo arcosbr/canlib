@@ -1,0 +1,17 @@
+<h1>A logging program</h1>
+<p><a href=".">Source code</a></p>
+
+<p>This is a graphical application which demonstrates how you can log incoming messages to a CSV (comma separated values) file.</p>
+
+<p>Much of this program (including parts of the GUI and the method for listening for messages) comes from <a href="../../../../Getting Started/CSharp/VS2010/4_WpfApplication/Readme.html">Part 4</a> in the C# tutorial. It is recommended that you take a look at that if anything is unclear. This readme will only explained the parts that are not explained in the tutorial.</p>
+
+<h2>Usage</h2>
+<p>Enter a channel number in the textbox and press "Initialize" to open a channel. Next, press "Select file" and select a location and name for the log file. When a message is received on the channel, it will be printed to the output box and written to the file. The file will be saved when the program closes. </p>
+
+<h2>Creating a log file</h2>
+<p>When the user presses "Select file" and selects a file, we call the <code>SaveFileDialog</code>'s <code>OpenFile</code> method to create a file and get a <code>Stream</code> to it, which we use to create a <code>StreamWriter</code>. This object will then be used to write text to the file with the <code>WriteLine</code> method.</p>
+
+<h2>Converting to CSV</h2>
+<p>The first thing we write to the CSV file is a header. This is optional but is helpful for telling the fields apart. This is done as soon as the file is created.</p>
+
+<p>Whenever a message is received on the channel, the <code>ProcessMessage</code> will print it to the output box and write it to the <code>StreamWriter</code>. Here we use the <code>toCSV</code> of the <code>Message</code> class, which just returns a string with all the fields in a message, separated by commas.</p>

@@ -1,0 +1,21 @@
+<h1>
+Asynchronous notifications and callback delegates
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This program shows how to use <code>kvSetNotifyCallback</code> to add an event handle which listens for incoming messages. This is a Windows Forms application, and the program logic is found in Notify.cs. </p>
+
+<h2>Usage</h2>
+<p>Open the program and press "Open Channel". The program will listen for messages on channel 0 with a bitrate of 250 kb/s. Whenever a message is received, it will be displayed on the screen. </p>
+
+<h2>Using <code>kvSetNotifyCallback</code></h2>
+<p><code>kvSetNotifyCallback</code> takes a handle, a callback delegate, a pointer to some context data and a flag that determines which events to listen for. Once a matching event occurs on the channel, the callback function will be called. In this case, we pass the canNOTIFY_RX code, which means that we will get notifications when a message is received.</p>
+
+<p>The callback delegate always has <code>void</code> as return type and takes the channel handle, the context data pointer and the event type as parameters. In our function, we read all waiting messages and enqueue them in a message queue. When all messages are read we signal our worker thread to start processing the messages, in this case displaying the messages on screen.</p>
+
+<p><b>Note:</b> The callback function is called in the context of a high-priority thread created by CANLIB. You should take precaution not to do any time consuming tasks in the callback. You must also arrange the synchronization between the callback and your other threads yourself.</p>
+
+
+<h2>More information</h2>
+<p>Further information can be found in the section on asynchronous notifications in the Canlib help file.</p>

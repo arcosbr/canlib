@@ -1,0 +1,39 @@
+<h1>
+Example 1: Hello world
+</h1>
+
+<p>This first example shows how to open a channel and send a message on it, with or without the <code>Handle</code> wrapper.</p>
+
+<h2>Using the wrapper</h2>
+
+<p><a href="src/examples/HelloWorld.java">Source code</a></p>
+
+<p>The first thing we do is to create a <code>Handle</code> object and pass the channel we want to use as the argument to its constructor. This will intialize Canlib (which always needs to be done before using any of its methods), open a channel and return a handle that we use to communicate with the channel. If something goes wrong, the constructor (and most other methods) will throw an exception.</p> 
+
+<p>The next thing we do is to set a bitrate. This always needs to be done before we use our handle. This is done by calling <code>SetBusParams</code>. This takes the constant <code>canBITRATE_250K</code> as one of its arguments. You can ignore the rest of the arguments for now. After the bitrate is set, we can go on bus using the <code>BusOn method</code>. </p>
+
+<p>After going on bus, we are ready to send a message. We construct a <code>Message</code> object using an identifier, a data array, a dlc value (which is the length of the data array) and an optional flag value. We pass the value to the <code>writeMessage</code> method, which will put our message on the channel. We then use the <code>WriteMessageSync</code> method to wait until 50 ms have passed or the message is transmitted ok. Note that this last call will give an exception if the message could not be sent properly (i.e. if there is no receiving channel or it is off bus).</p>
+
+<p>Once we are done with our channel, we go off bus and close the channel using <code>busOff</code> and <code>close</code>.
+
+<h2>Not using the wrapper</h2>
+
+<p> <a href="src/examples_no_obj/HelloWorld.java">Source code</a></p>
+
+<p>In order to use any Canlib methods, we need the instance of the <code>ICanlib</code> interface. In this case, we assign the instance of the interface to a variable in the start of the code in order to make it a bit more readable. </p>
+<p>When we do not use the wrapper class, we always need to call <code>canInitializeLibrary</code> explicitly before we start using Canlib in an application. The next thing we do is create a channel handle using <code>canOpenChannel</code>. This will return an integer which is used to identify our channel handle. If something goes wrong, we will receive a value which is lower than 0. This value represents an error code. In order to determine what has gone wrong, we have created the <code>displayError</code> method which checks if the result is an error and if so, prints the error message. Having such a method is usually a good idea.</p>
+
+<p>After we have a handle for our channel, we use the <code>canSetButParams</code> methods to set the bitrate to 250 kb/s. Once that is done, we can go on bus using <code>canBusOn</code> method.</p>
+
+<p>Once we are on bus, we can send our message. This message consists of an identifier, an array of up to 8 bytes, the length of the array and the optional flags. We send these parameters to <code>canWrite</code> to put the message on the channel.</p>
+
+<p>After we've sent our message, we use <code>canBusOff</code> to go off bus and <code>canClose</code> to close the channel. After we close the channel, we can no longer use the handle.</p>
+
+
+<h2>Exercises</h2>
+<ul>
+<li>The <code>canWriteWait</code> method combines <code>canWrite</code> with <code>canWriteSync</code>. Try it out.</li>
+<li>Use some other program (such as Kvaser CanKing) to listen for messages on a different channel on the same device as the one used in your program. Make sure to use the same bitrate.</li>
+<li>Change the fourth parameter in the call to <code>canWrite</code> to 4. What happens to the message on the receiving side?</li>
+<li>Change the message identifier to something large, like 10000. What happens on the receiving side? Then, change the fifth parameter to <code>Canlib.canMSG_EXT</code>. What happens now?</li>
+</ul>

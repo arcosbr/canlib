@@ -1,0 +1,19 @@
+<h1>
+Event handles in Visual Basic
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This program can open two windows: one which sends messages to a channel and one which reads messages from a channel. The program uses event handles to listen for messages on the channel.</p>
+
+<h2>Running the program</h2>
+<p>The program is rather simple: Click "Create Receiving Node" to open a window where all messages to channel 0 will be displayed. Click "Create Transmitter" to open a window where you can create and send messages from channel 1.  </p>
+
+<h2>Understanding the program</h2>
+<p>When a <code>Transmitter</code> object, is created, the program opens channel 1, receives a handle and goes on bus. When "SEND" is pressed, it creates a message from the values in the text boxes. </p>
+
+<p>The important things happen in the <code>NodeDisplay</code> class. Here, we create a <code>CanlibWaitEvent</code> object in the constructor after going on bus. This class contains a <code>SafeWaitHandle</code> object. We use the <code>canIOCTL_GET_EVENTHANDLE</code> function code in a <code>canIoCtl</code> to get an event handle from Canlib, and pass it to the <code>CanlibWaitEvent</code> constructor, where it's wrapped by the <code>SafeWaitHandle</code>. In the <code>While</code> loop, we use our <code>CanlibWaitEvent</code> in a method called <code>WaitAny</code>, which waits for the determined time (1000 ms) has passed or until an event happens on its handle. Once an event happens, the method returns true and the program reads all the messages in the receiving buffer. </p>
+
+
+<h2>More information</h2>
+<p>To learn more about event handles, take a look at the documentation for the<code> WaitHandle</code> and <code>SafeWaitHandle</code> classes. </p>

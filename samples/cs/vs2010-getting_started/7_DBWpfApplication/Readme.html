@@ -1,0 +1,23 @@
+<h1>
+Part 7: A graphical application with databases
+</h1>
+
+<a href=".">VS2010 project</a>
+
+<p> In this example, we create a program which can listen for messages matching a specific id and plot the input values in a graph.  </p>
+
+<h2>Setup</h2>
+<p>In order to run the program, you need to have the WPF Toolkit installed. It can be downloaded for free from the <a href="http://wpftoolkit.codeplex.com/"> WPF Toolkit website</a>.  WPF doesn't provide any chart feature by default, which is why this extension is needed.</p>
+
+<h2>Using the program</h2>
+<ol>
+  <li>Press "Load Database" and select a database file. </li>
+  <li>Select a message in the drop-down menu and press "Load"</li>
+  <li>Enter a channel number and press "Initialize".</li>
+  <li>Press "Start logging"</li>
+  <li>Any incoming messages whose identifier matches the selected one will be interpreted as signal values and displayed in the chart.</li>
+</ol>
+
+<h2>Understanding the program</h2>
+<p>This application is rather similar to the ones in part <a href="../4_WpfApplication/Readme.html">4</a> and <a href="../6_DBApp/Readme.html">6</a>. Like the application in part 4, it uses a BackgroundWorker to run a loop which listens for incoming messages, and just like in part 6 we use <code>GetSignalValueFloat</code> to get the physical values of the signals.</p>
+<p>For each signal, we put the physical values along with the timestamp into an <code>ObservableCollection</code> of <code>KeyValuePair</code>s. Each collection is bound to one line in the chart, and each <code>KeyValuePair</code> represents a data point. Whenever a new point is added, the binding makes sure that the line is updated.</p>

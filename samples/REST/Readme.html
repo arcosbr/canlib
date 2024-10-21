@@ -1,0 +1,18 @@
+<h1>The REST API</h1>
+
+<h2>Introduction</h2>
+<p>This section describes how to use the REST API to send commands to devices which support it. Using the REST API, you can call the most common CAN functions on your device. The full specification of the API is available <a href="http://www.kvaser.com/software/7330130981515/V1_6_576/kvaser_rest_api_specification.pdf">here</a>. </p>
+
+<h2>Setting up the device</h2>
+<p>First off, make sure the device is properly configured. Connect the device to a USB port on your PC and open Kvaser Hardware. Under the Tools tab, select "Setup a Remote Kvaser Device". Select your device and press next, then go to the Settings tab and check "Enable Webserver". If you haven't already configured your device to connect to a network, make sure to do so. For details on how to do this, check the Getting Started guide for your device.</p>
+
+<p>Once the device is configured, connect it to a powered CAN bus with some other device connected to it. The device should power up and connect to the network. If you select "Select Kvaser Remote Device From the Network" in Kvaser Hardware, the device should appear.</p>
+
+<h2>Using the API</h2>
+<p>The calls available in the REST API are almost identical to the ones in Canlib. One difference is that they all have an optional parameter of integer type: <code>ident</code>. This parameter is returned in the reply and is useful for determining what action to take in the callback function.  </p>
+
+<p>When calling <code>canInitializeLibrary</code>, there are a few extra parameters: a password parameter in case the device is protected by a password, a mode parameter which can be set to <code>jsonp</code> to wrap the reply in a <code>canlib_callback</code> call, a timeout parameter which sets the session timeout and a dummy session parameter which will set the session id to only zeros. The reply will contain a session id which is needed o make any other calls. Only one session can be active at a time. </p>
+
+
+<h2>Example</h2>
+<p> <a href="HTML/Readme.html">HTML application</a>. </p>

@@ -1,0 +1,33 @@
+<h1>Fetching device info with Kvmlib</h1>
+
+<a href=".">Source code</a>
+
+<p>This program demonstraters some basic Kvmlib functions which read info about a device. </p>
+
+<h2>Preliminaries</h2>
+<p>To use Kvmlib you need to add <code>Kvaser.Kvmlib.dll</code> as a reference to the project. Like with <code>Kvaser.CanLib.dll</code>, you need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.Kvmlib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.Kvmlib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Initialization</h2>
+<p>Like Canlib, Kvmlib must be initialized before usage. This is done with a call to the <code>Initialize</code> method. Next, we open a handle to the device that we want to use, with <code>DeviceOpen</code>. Note that the first parameter here is the card number, which is not the same thing as the channel number used in Canlib. The card number can be found in Kvaser Hardware. One important thing to note is that Kvaser Hardware starts indexing the devices at 1, while Kvmlib starts at 0. This means that the number in Kvaser Hardware must be decreased by 1 in order to point to the correct device.</p>
+
+<h2>Functions demonstrated</h2>
+
+<h3>DeviceGetSerialNumber</h3>
+<p>This function returns the serial number of the device.</p>
+
+<h3>DeviceGetRTC</h3>
+<p>Reads the time from the device's hardware clock. The return value is an <code>Int64</code> with the timestamp in Unix time format (number of seconds since 1970-01-01 00:00:00). This can then be converted into a DateTime object as shown in the code. </p>
+
+<h3>DeviceDiskStatus</h3>
+<p>This method checks if the device has an SD card mounted. The output parameter <code>present</code> will be non-zero if that is the case.</p>
+
+<h3>LogGetFileCount</h3>
+<p>This method checks how many log files are on the SD card.</p>
+
+<h3>KmfGetUsage</h3>
+<p>Checks how many 512 byte sectors are available on the card, and how many of them that are used.</p>

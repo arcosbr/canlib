@@ -1,0 +1,43 @@
+<h1>
+Configuring devices with Kvrlib
+</h1>
+
+<p><a href=".">Source code</a></p>
+
+<p>This sample shows how you can use Kvrlib to configure a device.</p>
+
+
+<h2>Preliminaries</h2>
+<p>This program requires you to have references to canlibCLSNET.dll and kvrlibCLSNET.dll. You also need canlib32.dll, Kvrlib.dll, irisdll.dll, irisflash.dll and libxml2.dll in your path or have canlib SDK installed. </p>
+
+<h2>Setup and checking profile</h2>
+<p>The program takes a channel on which the device is connected as a command line argument. If an incorrect number of arguments is supplied, the program will run the <code>listDevices</code> method. This method just uses the Canlib call <code>canGetChannelData</code> to get the names of all the channels, then prints them.</p>
+
+<p>Just like Canlib, Kvrlib needs to be initialized. This is done by a call to <code>Kvrlib.InitializeLibrary</code>. The program also initializes Canlib to perform a few of its operations. The first thing it does is to get the device's EAN and serial number using <code>canGetChannelData</code>. It then calls <code>IsAvaliableForConfig</code> to check if we can configure the device.</p>
+
+<p>In <code>IsAvailableForConfig</code>, the program tries to open the channel exclusively (so no other program will have access to it). It then gets the bus type using the <code>canIoCtl</code> function <code>canIOCTL_GET_BUS_TYPE</code> to check if the device is connected locally to the host. Once this is done, it closes the channel and then checks all the other channels to the same device and see if they also can be opened exclusively. The last thing the method does is to check if the device can be opened without a password. This is done with the <code>ConfigOpen</code> call. This call takes the channel number, a mode parameter, a password and a reference to a config handle (which will be overwritten if the call is successful) as parameters. This config handle will then be used to refer to the configuration. The mode specifies if we want to open the channel for reading only, for reading and writing, or for erasing and writing. In this case, we first try to open it for reading using the empty password (in the <code>isPasswordFree</code> method). We then open it for reading and writing using either the empty password or the supplied password (which is empty by default but can be changed in Main if you want to connect to a device with a password). </p>
+
+<p>Once all the checks are done, the program unloads Canlib as it is no longer needed. </p>
+
+<h2>Reading profiles</h2>
+<p>The program uses <code>ConfigNoProfilesGet</code> to get the number of profiles supported on the device. This call is pretty straight-forward, it just outputs the maximum number of configurations supported on the device. It then calls <code>ConfigActiveProfileGet</code> to get the index of the currently active profile. Then, <code>ConfigInfoGet</code> is used to read the XML data for each of the config files on the device.</p>
+
+<h2>Listing networks</h2>
+<p>We first create a new config handle using <code>ConfigOpenEx</code>. Note that this is different from the regular <code>ConfigOpen</code> as it returns a handle for a specific profile on the device. With this handle, we use <code>WlanStartScan</code> to start looking for WLAN networks, then we read the information about these networks on at a time using <code>WlanGetScanResults</code>. This last method will go through all the discovered networks and return a <code>BLANK</code> status once it has finished. </p>
+
+<h2>Reading and writing configurations</h2>
+<p>Next, we get a new config handle with reading and writing privileges. This handle is used in the <code>DoConfigure</code> method, where we first read the config file using <code>ConfigGet</code> command. We then print the configuration to screen. Using <code>ConfigVerifyXml</code> we verify that the XML is valid to use as configuration and using <code>ConfigSet</code>, we write the configuration to the device.  </p>
+
+<p>Once we've updated the configuration, the device will be temporarily unavailable, so we use the method <code>waitForDevice</code> to wait until it appears again. This method keeps going through all the available channels and checks if one of them matches the previously stored EAN and serial number. When it finds the device, it returns true.</p>
+
+<h2>Testing the network configuration</h2>
+<p>Once we have found the device again, we run the <code>TestConfiguration</code> method. Here, we start the network test by calling <code>NetworkConnectionTest</code> with the config handle and 1 as arguments (the second argument determines if the test should start or stop). Then, we use <code>NetworkGetRssiRtt</code> and <code>NetworkGetConnectionStatus</code> once every second to get the results from the test. When we are done, we call <code>NetworkConnectionTest</code> again, but with 0 as second argument to stop the test. </p>
+
+<p>Using <code>NetworkGetAddressInfo</code>, we get the IP address, MAC address, netmask, gateway and DHCP of the device. These are all in the form of <code>Kvrlib.Address</code> objects, so we use <code>StringFromAddress</code> to get their string representations. We also use <code>GetHostName</code> to receive the device's hostname. The last thing that happens is that we show how to use the <code>HostName</code> method to create a hostname from the high and low parts of the EAN and the serial number.</p> 
+
+<h2>Clearing a configuration</h2>
+<p>Note: this part is commented out by default as it will change the configuration of your device. You can uncomment it if you wish to try it out. </p>
+
+<p>We set the configuration to the one with the highest index using <code>ConfigActiveProfileSet</code>. Then, we call <code>eraseConfiguration</code>, when we open a config handle with erase privileges and call <code>ConfigClear</code> to erase the profile. Once that is done, we set the active profile to the one with index 0 on the device using <code>ConfigActiveProfileSet</code>.
+
+<p>Finally, we unload the Kvadlib library and exit.</p>

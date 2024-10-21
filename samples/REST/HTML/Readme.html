@@ -1,0 +1,24 @@
+<h1>Using the REST API in HTML</h1>
+
+<a href="index.html">Link to application</a>
+<a href =".">Link to project directory</a>
+
+<p>This sample is intended to demonstrate how to use the REST API in a HTML library to send commands to a remote unit. The web application can initialize a device, put it on bus and read and write messages to and from the bus. When a message is received, it will be printed and its first byte will be displayed in a guage. </p>
+
+<h2>Connecting to the device</h2>
+<p>Enter the device's host name or IP address (both visible in Kvaser Hardware) in the "Device name" text box. If the device has a password, enter it in the "Password" box. When you press "Init", the <code>initialize</code> function will execute.</p>
+
+<p>In the <code>initialize</code> function, we first check if we have a stored session id in a cookie. If so, we will use that session id to close the channel and unload the library if we already have a channel handle. This is done so we don't leave channels open in case we start working on one device and then switch to another. </p>
+
+<p>When connecting to a device, we first create a url from the host name, the session id and the function name. We then call <code>getJSON</code> with this url, and the data for the function. The <code>mode</code> parameter in this particular call tells the device that it should reply in <code>jsonp</code>, which means that the <code>canlib_callback</code> function will be invoked with the return value as its parameter. Note that we include an <code>ident</code> field, which will be used for the callback function. </p>
+
+<p>Once we receive a reply from the device, the <code>canlib_callback</code> function will be executed. Here, we use the <code>ident</code> field we sent in our request to determine what to do. In the case of initializing the library, we will receive a new session id and use that for future calls.</p>
+
+
+<h2>Going on bus, reading and writing</h2>
+
+<p>Calling other functions on the device work in a similar way as initializing the library. We use <code>getJSON</code> to make the call and pass any important parameters in the call, along with a function identifier.</p>
+
+<p>When going on bus, a timer starts which will call <code>canRead</code> periodically. In this function, we call the <code>canRead</code> function on the device. The <code>max</code> parameter here indicates that we can receive up to 200 messages in one reply (but the callback function will call <code>canRead</code> again until there are no more messages, so we don't leave any unread messages). When we receive a message, the callback function prints it to the output box and also sets the guage's value to the first byte of the message.</p>
+
+<p>To write a message, we construct a string from the message data, with commas between the bytes. This string is then sent along with the other message data.</p>

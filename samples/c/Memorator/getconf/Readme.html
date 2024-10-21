@@ -1,0 +1,17 @@
+<h1>getconf</h1>
+
+<a href="getconf.c">Source code</a>
+
+<p>This sample demonstrates how to use kvmlib and kvaMemolib to list log files and to read and write configurations to a device.</p>
+
+<h2>Usage</h2>
+<p>To use the program, run <code>getconf memoNr</code> followed by optional flags, where <code>memoNr</code> is the card number of the Memorator device you want to use. Use the <code>-ext</code> flag if the device has extended data capabilities, the <code>-format</code> flag if the SD card on the device is unformated and you wish to format it, and the <code>-write</code> flag if you have a <code>param.lif</code> file that you want to write to your device. </p>
+
+<h2>Program description</h2>
+<p>The library is initialized with <code>kvmInitialize</code> and the device is opened with <code>kvmDeviceOpen</code>. If the SD card is not formatted and the <code>-format</code> flag is used, the program will call <code>kvmDeviceFormat</code> to format the card. </p>
+
+<p><code>kvmLogFileGetCount</code> is used to find the total number of log files on the card. Each log file is mounted with <code>kvmLogFileMount</code>, which also gives the number of events in the file. <code>kvmLogFileGetStartTime</code> is used to find the start time of the log file.</p>
+
+<p>The <code>param.lif</code> file containing all the log files is read using <code>kvmKmfReadConfig</code>. If the <code>-write</code> flag is used, the program will attempt to read a local file called <code>param.lif</code> and write it to the device using <code>kvmKmfWriteConfig</code>. Otherwise, the program will write the file fetched from the device to a local file.</p> 
+
+

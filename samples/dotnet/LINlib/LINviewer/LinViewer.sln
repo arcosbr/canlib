@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinViewer", "LinViewer.csproj", "{338FBBC6-6EEE-4894-B6FE-DA85F67F80DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{338FBBC6-6EEE-4894-B6FE-DA85F67F80DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{338FBBC6-6EEE-4894-B6FE-DA85F67F80DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{338FBBC6-6EEE-4894-B6FE-DA85F67F80DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{338FBBC6-6EEE-4894-B6FE-DA85F67F80DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BDA5CC1A-6304-4B56-906F-B28042D476B9}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,31 @@
+<h1>Serialization and deserialization</h1>
+
+<a href=".">Source code</a>
+
+<p>In the <a href="../3_FileIO_T/Readme.html">previous example</a>, we demonstrated how to perform file input and output in t. Here, we will do essentially the same thing, but we will use the serialization capabilities of t to make reading and writing a bit easier. </p>
+
+<h2>Preliminaries</h2>
+<p>To use CanLib you need to add <code>Kvaser.CanLib.dll</code> as a reference to the project. You need to match the version of the dll with your .NET version.</p>
+
+<p>The sample solution includes two projects with the same sample code. One project is targeting .NET Framework 4.8.1 and one project is targeting .NET 6.0.<br/>
+   The .NET Framework 4.8.1 project is referencing <code>Kvaser.CanLib.dll</code> using a direct file reference.<br/>
+   The .NET 6.0 project is referencing <code>Kvaser.CanLib.dll</code> using the NuGet package. A nuget.config file is used to point out the path to the folder containing the NuGet packages.<br/>
+   Both projects can either use a direct file reference or a NuGet package reference. We have chosen to use different techniques for demonstration purposes.</p>
+
+<h2>Usage</h2>
+<p>The program is used just like the previous one. The difference you will notice is that the messages are not stored in human-readable format, so when the program reads the output file, the output will look a bit strange.</p>
+
+<h2>The C# program</h2>
+<p>The C# part is identical to the previous example.</h2>
+
+<h2>The t program</h2>
+<p>The t program is almost identical to the one in the previous example. This section will only describe the differences.</p>
+
+<h3>Variables</h3>
+<p>Instead of an array of lines, we have an array of text blocks. Each of them are the size of a <code>CanMessage</code> structure. </p>
+
+<h3>Processing incoming messages</h3>
+<p>The <code>msg_to_str</code> has become simplified to just one line: we give the <code>char</code> array in the <code>MsgBlock</code> struct the value of the incoming <code>CanMessage</code>. This will serialize the <code>CanMessage</code> into a string. When we stop the script, we use <code>fileWriteBlock</code> to write the text blocks to the file. </p>
+
+<h3>Reading messages</h3>
+<p>The <code>read_messages</code> method is much simpler. Here, we just create a string with the size of a <code>CanMessage</code>, use <code>fileReadBlock</code> to read the input to it and then serialize it to a message. </p>
